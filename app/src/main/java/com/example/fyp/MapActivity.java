@@ -1,18 +1,23 @@
+
 package com.example.fyp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,6 +34,7 @@ import android.widget.Toast;
 
 import com.example.fyp.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -58,6 +64,7 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.security.AccessController.getContext;
 
@@ -77,12 +84,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         //if permission is granted, then proceed
         if (mLocationPermissionGranted) {
+//            initMap();
             getDeviceLocation();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED)
             {
-                         return;
+                return;
             }
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -96,6 +104,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+    private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
     private static final float DEFAULT_ZOOM = 15f;
     private static final int PLACE_PICKER_REQUEST = 1;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
@@ -108,7 +119,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ImageView mRecenter, mInfo, mPlacePicker;
 
     //vars
-    private Boolean mLocationPermissionGranted = false;
+    private boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
@@ -127,29 +138,142 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mInfo = (ImageView) findViewById(R.id.place_info);
         mPlacePicker = (ImageView) findViewById(R.id.place_picker);
 
-        getLocationPermission();
+        //getLocationPermission();
+        initMap();
+    }
 
+    private boolean checkMapServices(){
+        if(isServicesOK()){
+            if(isMapsEnabled()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        Intent enableGpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        //accepted or denied -> onActicityResuly
+                        startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public boolean isMapsEnabled(){
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+            return false;
+        }
+        return true;
+    }
+
+    private void getLocationPermission() {
+
+/*//         * Request location permission, so that we can get the location of the
+//         * device. The result of the permission request is handled by a callback,
+//         * onRequestPermissionsResult.*/
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+//            initMap();
+            getDeviceLocation();
+            // getChatrooms();
+        } else {   //dialog to use location permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    public boolean isServicesOK(){
+        Log.d(TAG, "isServicesOK: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapActivity.this);
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occured but we can resolve it
+            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MapActivity.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        mLocationPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 //have results
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;
+                    //    initMap();
+                    getDeviceLocation();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: called.");
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ENABLE_GPS: {
+                if(mLocationPermissionGranted){
+                    //getChatrooms();
+//                    initMap();
+                    getDeviceLocation();
+                }
+                else{
+                    getLocationPermission();
+                }
+            }
+        }
 
     }
-    
-    //initialize 
+
+
+
+    //initialize
     private void init(){
         Log.d(TAG, "init: initializing");
 
 
         // auto text completion
 
-            mGoogleApiClient = new GoogleApiClient
-                    .Builder(this)
-                    .addApi(Places.GEO_DATA_API)
-                    .addApi(Places.PLACE_DETECTION_API)
-                    .enableAutoManage(this, this)
-                    .build();
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
 
-            mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
+        mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
 
-            mGeoDataClient = Places.getGeoDataClient(this, null);
-            mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        mGeoDataClient = Places.getGeoDataClient(this, null);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
 
 
@@ -180,6 +304,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: clicked Recenter icon");
+//                initMap();
                 getDeviceLocation();
             }
         });
@@ -232,7 +357,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         HideSoftKeyboard();
     }
     //clicked on map icon to reveal surrounding things
-    protected void onActivityResult (int requestCode, int resultCode, Intent data){
+   /* protected void onActivityResult (int requestCode, int resultCode, Intent data){
         if (requestCode == PLACE_PICKER_REQUEST){
             if (resultCode == RESULT_OK) {
                 //place object
@@ -244,7 +369,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
             }
         }
-    }
+    }*/
 
 
 
@@ -260,16 +385,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }catch (IOException e){
             Log.e(TAG, "geoLocate: IOException " + e.getMessage() );
         }
-            //if have list of addresses.  get only first position of list. only going to be one 
+        //if have list of addresses.  get only first position of list. only going to be one
         if (list.size() > 0){
             Address address = list.get(0);
             Log.d(TAG, "geoLocate: found a location" + address.toString());
-           // Toast.makeText(this, address.toString() , Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, address.toString() , Toast.LENGTH_SHORT).show();
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
         }
     }
+
+
 
     //get device location
     private void getDeviceLocation(){
@@ -286,6 +413,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
 
+//                            assert currentLocation != null;
+                            if (currentLocation!=null)
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM,
                                     "My Location");
@@ -306,6 +435,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void moveCamera (LatLng latlng, float zoom, PlaceInfo placeInfo){
         Log.d(TAG, "moveCamera: moving camera to lat:" + latlng.latitude + ", lng:" + latlng.longitude);
+//        if (latlng!=null)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
 
         mMap.clear();
@@ -315,9 +445,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (placeInfo != null){
             try{
                 String snippet = "Address: " + placeInfo.getAddress() + "\n" +
-                                 "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
-                                 "Website:" + placeInfo.getWebsiteUri() + "\n" +
-                                 "Price Rating " + placeInfo.getRating() + "\n";
+                        "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
+                        "Website:" + placeInfo.getWebsiteUri() + "\n" +
+                        "Price Rating " + placeInfo.getRating() + "\n";
 
                 //pass the snippet to the marker
                 MarkerOptions options = new MarkerOptions()
@@ -341,7 +471,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void moveCamera (LatLng latlng, float zoom, String title){
-        Log.d(TAG, "moveCamera: moving camera to lat:" + latlng.latitude + ", lng:" + latlng.longitude);
+        Log.d(TAG, "moveCamera: moving camera to lat:" + latlng.latitude + ", lng:" + latlng.longitude+ ", latlng:" +latlng+ ", lng:" +zoom);
+//        if (mMap!=null)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
 
         MarkerOptions options = new MarkerOptions()
@@ -360,12 +491,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(MapActivity.this);
     }
 
-    private void getLocationPermission(){
+    /*private void getLocationPermission(){
         Log.d(TAG, "getLocationPermission: getting location permission");
         //ask for permission to turn on GPS geolocation
 
         String[] permissions= {Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION};
+                Manifest.permission.ACCESS_COARSE_LOCATION};
 
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -385,9 +516,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     permissions,
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
-    }
+    }*/
 
-    @Override
+  /*  @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: Called");
         mLocationPermissionGranted = false;
@@ -410,17 +541,44 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         }
+    }*/
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+//        getDeviceLocation();
+        if(checkMapServices()){
+            if(mLocationPermissionGranted){
+//                initMap();
+                getDeviceLocation();
+            }
+            else{
+                getLocationPermission();
+            }
+        }
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.stopAutoManage(MapActivity.this);
+            mGoogleApiClient.disconnect();
+        }
+
+    }
+
+
+
     private void HideSoftKeyboard(){
-      //  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        //  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         //imm.hideSoftInputFromInputMethod(mSearchText.getWindowToken(), 0);
-         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     /* ---- Auto Complete google places API suggestions ----
-            */
-     private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
+     */
+    private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             HideSoftKeyboard();
@@ -431,41 +589,41 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                     .getPlaceById(mGoogleApiClient, placeId);
-                      //submit request                  //create actual callback
+            //submit request                  //create actual callback
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
         }
     };
 
-     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
-         @Override
-         public void onResult(@NonNull PlaceBuffer places) {
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
             //callback to get all information on the place //receive request and callback
-             if (!places.getStatus().isSuccess()){
-                 Log.d(TAG, "onResult: Place query did not complete successfully" + places.getStatus().toString());
-                 //must release placebuffer to prevent memory leak
-                 places.release();
-                 return;
-             }
-             final Place place = places.get(0);
+            if (!places.getStatus().isSuccess()){
+                Log.d(TAG, "onResult: Place query did not complete successfully" + places.getStatus().toString());
+                //must release placebuffer to prevent memory leak
+                places.release();
+                return;
+            }
+            final Place place = places.get(0);
 
-             try{
-                 mPlace = new PlaceInfo();
-                 mPlace.setName(place.getName().toString());
-                 mPlace.setAddress(place.getAddress().toString());
-                 //mPlace.setAttributions(place.getAttributions().toString());
-                 mPlace.setId(place.getId());
-                 mPlace.setLatlng(place.getLatLng());
-                 mPlace.setRating(place.getRating());
-                 mPlace.setPhoneNumber(place.getPhoneNumber().toString());
-                 mPlace.setWebsiteUri(place.getWebsiteUri());
+            try{
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                mPlace.setAddress(place.getAddress().toString());
+                //mPlace.setAttributions(place.getAttributions().toString());
+                mPlace.setId(place.getId());
+                mPlace.setLatlng(place.getLatLng());
+                mPlace.setRating(place.getRating());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                mPlace.setWebsiteUri(place.getWebsiteUri());
 
-                 Log.d(TAG, "onResult:  Place" + mPlace.toString());
-             }catch (NullPointerException e){
-                 Log.e(TAG, "onResult: NullPointerException" + e.getMessage() );
-             }
-                //get camera for the title
-                moveCamera(new LatLng(place.getViewport().getCenter().latitude
-                ,place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace);
+                Log.d(TAG, "onResult:  Place" + mPlace.toString());
+            }catch (NullPointerException e){
+                Log.e(TAG, "onResult: NullPointerException" + e.getMessage() );
+            }
+            //get camera for the title
+            moveCamera(new LatLng(place.getViewport().getCenter().latitude
+                    ,place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace);
 
              /*Log.d(TAG, "onResult: Place Details" + place.getAttributions());
              Log.d(TAG, "onResult: Place Details" + place.getViewport());
@@ -475,10 +633,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
              Log.d(TAG, "onResult: Place Details" + place.getAddress());
              Log.d(TAG, "onResult: Place Details" + place.getLatLng());*/
 
-             //mPlace = place;
-                places.release();
-         }
-     };
+            //mPlace = place;
+            places.release();
+        }
+    };
 
 }
 
