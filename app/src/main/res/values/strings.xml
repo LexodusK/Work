@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">FYP</string>
     <string name="google_API">AIzaSyAw_bL96m9ni55l7V30TYSEKp39FufxCkM"</string>
+    <string name="filter">Select Parking Lot Types</string>
+    <string name="header">Parking Lot Finder</string>
+    <string name="smallheader">Help to improve the service by contributing!</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 
 </resources>
