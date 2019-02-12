@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -73,7 +75,7 @@ import java.util.Map;
 import static java.security.AccessController.getContext;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -154,6 +156,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         drawer = findViewById(R.id.drawer_layout);
 
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
@@ -164,6 +169,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         Log.d(TAG, "onCreate: synced");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
 
 
     }
@@ -674,5 +681,30 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.parkingfine:
+                Toast.makeText(this, "clicked on parking fine", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.findcar:
+                Toast.makeText(this, "find car", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.signup:
+                Toast.makeText(this, "Sign up", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.login:
+                Toast.makeText(this, "login", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+
+        //if false then no item selected
+        return true;
+    }
 }
 

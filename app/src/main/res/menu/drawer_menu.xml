@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+     <item android:id="@+id/filter"
+         android:icon="@drawable/ic_filter"
+         android:title="@string/filter" />
+
+    <item android:id="@+id/shaded"
+        android:icon="@drawable/ic_shaded"
+        android:title="Shaded Parking" />
+
+    <item android:id="@+id/free"
+        android:icon="@drawable/ic_findcar"
+        android:title="Free parking" />
+
+    <item android:id="@+id/paidparking"
+        android:icon="@drawable/ic_paidparking"
+        android:title="Paid Parking" />
+
+    <item android:id="@+id/multistorey"
+        android:icon="@drawable/ic_multistorey"
+        android:title="Multistorey car park" />
+
+    <item android:id="@+id/disabled"
+        android:icon="@drawable/ic_disabled"
+        android:title="Disabled parking" />
+
+    <item android:id="@+id/ev"
+        android:icon="@drawable/ic_ev"
+        android:title="Electric Vehicles" />
+
+    <item android:id="@+id/parkingfine"
+        android:icon="@drawable/ic_parkingfine"
+        android:title="Pay Parking Fines" />
+
+    <item android:id="@+id/findcar"
+        android:icon="@drawable/ic_findcar"
+        android:title="Find Car Location" />
+
+    <item android:id="@+id/signup"
+        android:icon="@drawable/ic_signup"
+        android:title="Sign up" />
+
+    <item android:id="@+id/login"
+        android:icon="@drawable/ic_login"
+        android:title="Login" />
+
+</menu>
