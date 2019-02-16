@@ -88,32 +88,32 @@
 
     </RelativeLayout>
 
-         <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="50dp"
+            android:layout_height="?attr/actionBarSize"
+            android:id="@+id/toolbar"
+            android:layout_marginTop="8dp"
+            android:elevation="1dp"/>
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:id="@+id/fragment_container"/>
 
-            <android.support.v7.widget.Toolbar
-                android:layout_width="50dp"
-                android:layout_height="?attr/actionBarSize"
-                android:id="@+id/toolbar"
-                android:layout_marginTop="8dp"
-                android:elevation="1dp"/>
-            
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/fragment_container"/>
+    </LinearLayout>
 
-        </LinearLayout>
-
-        <android.support.design.widget.NavigationView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:id="@+id/nav_view"
-            app:headerLayout="@layout/nav_header"
-            app:menu="@menu/drawer_menu"/>
+    <android.support.design.widget.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:id="@+id/nav_view"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu"/>
 
 
 </android.support.v4.widget.DrawerLayout>

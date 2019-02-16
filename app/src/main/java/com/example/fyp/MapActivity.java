@@ -86,6 +86,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is ready");
+
+
         mMap = googleMap;
 
         //if permission is granted, then proceed
@@ -118,6 +120,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             //encompass the entire world
             new LatLng(-40,-168), new LatLng(71,136));
+
 
 
     //widgets
@@ -405,7 +408,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             if (resultCode == RESULT_OK) {
                 //place object
                 Place place = PlacePicker.getPlace(this, data);
-
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
                         .getPlaceById(mGoogleApiClient, place.getId());
                 //submit request                  //create actual callback
@@ -458,9 +460,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 //                            assert currentLocation != null;
                             if (currentLocation!=null)
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                    DEFAULT_ZOOM,
-                                    "My Location");
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                                        DEFAULT_ZOOM,
+                                        "My Location");
 
                         }
                         else{
@@ -537,10 +539,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     /*private void getLocationPermission(){
         Log.d(TAG, "getLocationPermission: getting location permission");
         //ask for permission to turn on GPS geolocation
-
         String[] permissions= {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
-
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
@@ -553,7 +553,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         permissions,
                         LOCATION_PERMISSION_REQUEST_CODE);
             }
-
         }else{
             ActivityCompat.requestPermissions(this,
                     permissions,
@@ -565,7 +564,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.d(TAG, "onRequestPermissionsResult: Called");
         mLocationPermissionGranted = false;
-
         switch (requestCode){
             case LOCATION_PERMISSION_REQUEST_CODE:{
                 //some kind of permission was granted           if 1st permission was granted then good
@@ -692,7 +690,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 Toast.makeText(this, "find car", Toast.LENGTH_SHORT).show();
                 break;
 
-            case R.id.signup:
+            case R.id.register:
                 Toast.makeText(this, "Sign up", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -707,4 +705,3 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return true;
     }
 }
-

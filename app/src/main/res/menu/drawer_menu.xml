@@ -39,12 +39,16 @@
         android:icon="@drawable/ic_findcar"
         android:title="Find Car Location" />
 
-    <item android:id="@+id/signup"
+    <item android:id="@+id/register"
         android:icon="@drawable/ic_signup"
-        android:title="Sign up" />
+        android:title="Register" />
 
     <item android:id="@+id/login"
         android:icon="@drawable/ic_login"
         android:title="Login" />
+
+    <item android:id="@+id/signout"
+        android:icon="@drawable/ic_signup"
+        android:title="Sign Out"/>
 
 </menu>
