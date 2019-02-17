@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fyp.models.FloatingMarkerTitlesOverlay;
 import com.example.fyp.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -73,13 +74,17 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.example.fyp.Login;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+
 import static java.security.AccessController.getContext;
+
 
     public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener {
@@ -113,7 +118,21 @@ import static java.security.AccessController.getContext;
                 init();
 
 
+                //floatingMarkersOverlay = findViewById(R.id.map_floating_markers_overlay);
+                //floatingMarkersOverlay.setSource(googleMap);
+
+
             }
+
+
+//                IconGenerator iconFactory = new IconGenerator(this);
+//                Marker marker1 = googleMap.addMarker(new MarkerOptions().position(new LatLng(37.4207700,-122.084)));
+//                marker1.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker 1")));
+//                Marker marker2 = googleMap.addMarker(new MarkerOptions().position(new LatLng(37.4309165,-122.084)));
+//                marker2.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker 2")));
+
+
+
         }
 
         //global values
@@ -149,6 +168,9 @@ import static java.security.AccessController.getContext;
         private DrawerLayout drawer;
         private FirebaseFirestore mDb;
         private UserLocation mUserLocation;
+        private FloatingMarkerTitlesOverlay floatingMarkersOverlay;
+        private FirebaseAuth.AuthStateListener mAuthListener;
+
 
         @Override
         protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -191,7 +213,10 @@ import static java.security.AccessController.getContext;
 
         private void getUserDetails (){
 
-       //if (user == logged in)
+       //if (user == logged in) then save to database
+            Log.d(TAG, "getUserDetails: ID is " + FirebaseAuth.getInstance().getUid());
+         if (FirebaseAuth.getInstance().getUid()!=null){
+
             if (mUserLocation==null){
                 //empty constructor in userloc
                 mUserLocation = new UserLocation();
@@ -215,6 +240,8 @@ import static java.security.AccessController.getContext;
                 Log.d(TAG, "getUserDetails: mUserLocation is null");
                 getDeviceLocation();
             }
+
+          }
             //else
 
         }
@@ -322,10 +349,10 @@ import static java.security.AccessController.getContext;
                     android.Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionGranted = true;
-//            initMap();
-                getDeviceLocation();
-//                getUserDetails();
-                // getChatrooms();
+
+              //  getDeviceLocation();
+               getUserDetails();
+
             } else {   //dialog to use location permission
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
@@ -366,8 +393,8 @@ import static java.security.AccessController.getContext;
                             && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         mLocationPermissionGranted = true;
                         //    initMap();
-                        getDeviceLocation();
-//                        getUserDetails();
+//                        getDeviceLocation();
+                        getUserDetails();
                     }
                 }
             }
@@ -382,8 +409,8 @@ import static java.security.AccessController.getContext;
                     if(mLocationPermissionGranted){
                         //getChatrooms();
 //                    initMap();
-                        getDeviceLocation();
-//                        getUserDetails();
+//                        getDeviceLocation();
+                        getUserDetails();
                     }
                     else{
                         getLocationPermission();
@@ -481,20 +508,39 @@ import static java.security.AccessController.getContext;
                 }
             });
 
-            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                @Override
-                public void  onMapLongClick(LatLng point) {
-                    mMap.clear();
-                    mMap.addMarker(new MarkerOptions()
-                            .position(point)
-                            .title("You are here")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                            ));
-                }
-            });
+
+                mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void  onMapLongClick(LatLng point) {
+
+                        if (FirebaseAuth.getInstance().getUid()!=null) {
+                            Log.d(TAG, "onMapLongClick: Logged in as " + FirebaseAuth.getInstance().getUid());
+//                            mMap.clear();
+                            IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(point)
+                                    .title("You are here")
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                                    )).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker 1")));
+
+
+                        }
+                            //only users who login can add a marker
+                          else{
+                            Toast.makeText(MainActivity.this, "Login to add", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MainActivity.this, Login.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+
+
 
             HideSoftKeyboard();
         }
+
+
         //clicked on map icon to reveal surrounding things
    /* protected void onActivityResult (int requestCode, int resultCode, Intent data){
         if (requestCode == PLACE_PICKER_REQUEST){
@@ -559,7 +605,7 @@ import static java.security.AccessController.getContext;
                                    if (mUserLocation!=null) {
                                         mUserLocation.setGeo_point(geoPoint);
                                         mUserLocation.setTimestamp(null);
-//                                       saveUserLocation();
+                                       saveUserLocation();
                                     }
                                 }
 
@@ -695,10 +741,10 @@ import static java.security.AccessController.getContext;
 //        getDeviceLocation();
             if(checkMapServices()){
                 if(mLocationPermissionGranted){
-//                initMap();
-                    getDeviceLocation();
-//                    getUserDetails();
-                  //  getLastKnownLocation();
+//
+//                    getDeviceLocation();
+                    getUserDetails();
+
                 }
                 else{
                     getLocationPermission();
