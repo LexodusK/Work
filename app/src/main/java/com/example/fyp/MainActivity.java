@@ -16,6 +16,7 @@ import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -33,6 +34,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,7 +89,8 @@ import static java.security.AccessController.getContext;
 
 
     public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
-            GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener {
+            GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
+            AddParkingInfo.BottomSheetListener {
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -170,6 +173,9 @@ import static java.security.AccessController.getContext;
         private UserLocation mUserLocation;
         private FloatingMarkerTitlesOverlay floatingMarkersOverlay;
         private FirebaseAuth.AuthStateListener mAuthListener;
+        private TextInputLayout textInputTitle;
+        private TextInputLayout textInputDescription;
+        private TextView mTextView;
 
 
         @Override
@@ -181,6 +187,10 @@ import static java.security.AccessController.getContext;
             mInfo = (ImageView) findViewById(R.id.place_info);
             mPlacePicker = (ImageView) findViewById(R.id.place_picker);
             mDb = FirebaseFirestore.getInstance();
+            textInputTitle = findViewById(R.id.Title);
+            textInputDescription = findViewById(R.id.Description);
+            mTextView = (TextView) findViewById(R.id.ic_someText);
+
 
             //getLocationPermission();
             initMap();
@@ -209,7 +219,66 @@ import static java.security.AccessController.getContext;
             Log.d(TAG, "onCreate: synced");
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+            Button buttonOpenParkingInfo = findViewById(R.id.bottom_drawer);
+            buttonOpenParkingInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AddParkingInfo bottomSheet = new AddParkingInfo();
+                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+
+
+                }
+            });
+
+
+
         }
+
+        private boolean validateTitle(){
+            String TitleInput = textInputTitle.getEditText().getText().toString().trim();
+
+            if(TitleInput.isEmpty()){
+                textInputTitle.setError("Field can't be empty");
+                return false;
+            }else if(TitleInput.length()>25){
+                textInputTitle.setError("Title too long");
+                return false;
+            }
+            else{
+                textInputTitle.setError(null);
+                return true;
+            }
+
+        }
+
+        private boolean validateDescription(){
+            String DescriptionInput = textInputDescription.getEditText().getText().toString().trim();
+
+            if(DescriptionInput.isEmpty()){
+                textInputDescription.setError("Field can't be empty");
+                return false;
+            }else{
+                textInputDescription.setError(null);
+                return true;
+            }
+        }
+
+        //public because xml
+        public void confirmInput(View v){
+            //one vertical bar because both must be called; otherwise first will only be false
+            if(!validateDescription() | !validateTitle()){
+                return;
+            }
+
+            String input = "Title: " + textInputTitle.getEditText().getText().toString();
+            input += "\n";
+            input += "Description" + textInputDescription.getEditText().getText().toString();
+            Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "confirmInput: Saved input" + input);
+
+        }
+
+
 
         private void getUserDetails (){
 
@@ -837,6 +906,7 @@ import static java.security.AccessController.getContext;
             switch (item.getItemId()){
                 case R.id.parkingfine:
                     Toast.makeText(this, "clicked on parking fine", Toast.LENGTH_SHORT).show();
+
                     break;
 
                 case R.id.findcar:
@@ -865,5 +935,20 @@ import static java.security.AccessController.getContext;
             //if false then no item selected
             return true;
         }
+
+        @Override
+        public void onButtonClicked(String text, String text1) {
+            //onButtonClicked(String text) changes the main activity text
+              mTextView.setText(text);
+            Toast.makeText(this, text1,Toast.LENGTH_SHORT).show();
+//            confirmInput();
+//            validateTitle();
+//            validateDescription();
+
+
+         //   Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 

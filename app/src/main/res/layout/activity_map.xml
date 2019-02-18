@@ -5,14 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:fitsSystemWindows="true">
+
+    <!--tools:openDrawer="start">
+      uncomment to show the sliding drawer-->
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -31,6 +32,12 @@
             android:elevation="10dp"
             android:background="@drawable/white_border"
             android:id="@+id/relLayout1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="THIS IS THE STRING"
+                android:id="@+id/ic_someText"/>
 
             <ImageView
                 android:layout_width="15dp"
@@ -51,6 +58,7 @@
                 android:background="@null"
                 android:hint="Enter Address"
                 android:imeOptions="actionSearch"/>
+
 
         </RelativeLayout>
 
@@ -85,6 +93,15 @@
             android:scaleType="centerCrop"
             android:id="@+id/place_info"
             android:src="@drawable/ic_info"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ic_recenter"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentRight="true"
+            android:text="Drawer"
+            android:id="@+id/bottom_drawer"/>
 
     </RelativeLayout>
 

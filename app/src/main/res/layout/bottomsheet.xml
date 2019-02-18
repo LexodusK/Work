@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    android:id="@+id/fragment_history_menu_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/bottom_sheet_title"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp"
+            android:text="Title"
+            android:textSize="15sp"
+            android:id="@+id/bottom_title"/>
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="350dp"
+        android:src="@drawable/ic_edit"
+        android:id="@+id/ic_edit"/>
+
+
+    <RelativeLayout
+        android:id="@+id/bottom_sheet_description"
+        android:layout_width="340dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:layout_below="@+id/bottom_sheet_title">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp"
+            android:textSize="14sp"
+            android:text="Description"
+            android:id="@+id/bottom_description"/>
+    </RelativeLayout>
+</RelativeLayout>
