@@ -33,11 +33,11 @@
             android:background="@drawable/white_border"
             android:id="@+id/relLayout1">
 
-            <TextView
+        <!--    <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="THIS IS THE STRING"
-                android:id="@+id/ic_someText"/>
+                android:id="@+id/ic_someText"/>-->
 
             <ImageView
                 android:layout_width="15dp"
@@ -94,14 +94,14 @@
             android:id="@+id/place_info"
             android:src="@drawable/ic_info"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ic_recenter"
-            android:layout_marginLeft="10dp"
-            android:layout_alignParentRight="true"
-            android:text="Drawer"
-            android:id="@+id/bottom_drawer"/>
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/ic_recenter"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:text="Drawer"-->
+            <!--android:id="@+id/bottom_drawer"/>-->
 
     </RelativeLayout>
 

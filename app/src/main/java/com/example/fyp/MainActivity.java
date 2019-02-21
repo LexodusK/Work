@@ -90,7 +90,7 @@ import static java.security.AccessController.getContext;
 
     public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
-            AddParkingInfo.BottomSheetListener {
+            AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener {
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -176,6 +176,7 @@ import static java.security.AccessController.getContext;
         private TextInputLayout textInputTitle;
         private TextInputLayout textInputDescription;
         private TextView mTextView;
+        private ArrayList mMarkersList;
 
 
         @Override
@@ -189,7 +190,8 @@ import static java.security.AccessController.getContext;
             mDb = FirebaseFirestore.getInstance();
             textInputTitle = findViewById(R.id.Title);
             textInputDescription = findViewById(R.id.Description);
-            mTextView = (TextView) findViewById(R.id.ic_someText);
+//            mTextView = (TextView) findViewById(R.id.ic_someText);
+            mMarkersList = new ArrayList();
 
 
             //getLocationPermission();
@@ -219,16 +221,14 @@ import static java.security.AccessController.getContext;
             Log.d(TAG, "onCreate: synced");
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-            Button buttonOpenParkingInfo = findViewById(R.id.bottom_drawer);
-            buttonOpenParkingInfo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AddParkingInfo bottomSheet = new AddParkingInfo();
-                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
-
-
-                }
-            });
+//            Button buttonOpenParkingInfo = findViewById(R.id.bottom_drawer);
+//            buttonOpenParkingInfo.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    AddParkingInfo bottomSheet = new AddParkingInfo();
+//                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+//                }
+//            });
 
 
 
@@ -584,13 +584,41 @@ import static java.security.AccessController.getContext;
 
                         if (FirebaseAuth.getInstance().getUid()!=null) {
                             Log.d(TAG, "onMapLongClick: Logged in as " + FirebaseAuth.getInstance().getUid());
-//                            mMap.clear();
+                            mMap.clear();
+                            moveCamera(new LatLng(point.latitude, point.longitude), DEFAULT_ZOOM, "" );
+
+                          /*  if(!mMarkersList.isEmpty()){
+                                for ( int mMarkerIndex = 0; mMarkerIndex < mMarkersList.size() ; mMarkerIndex++){
+                                    if(mMarkersList.get(mMarkerIndex)==null){
+                                        mMarkersList.add();
+                                    }
+                                }
+                            }*/
+                            // array list to store the markers;
+                            // need a way to remove the selected marker, while retaining other markers
+                            // add the marker to the list when user click add parking -> filled in details -> save details
+                            mMarkersList.add(point);
+
+
+
+
+                            Log.d(TAG, "onMapLongClick: " + mMarkersList.toString() + "\n");
+                            Log.d(TAG, "onMapLongClick: lat is " + Double.toString(point.latitude) +
+                                                            "long is " + Double.toString(point.longitude));
+
+                            AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
+                            bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+
+
+
+
+
                             IconGenerator iconFactory = new IconGenerator(MainActivity.this);
                             mMap.addMarker(new MarkerOptions()
                                     .position(point)
                                     .title("You are here")
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                                    )).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker 1")));
+                                    )).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
 
 
                         }
@@ -857,7 +885,8 @@ import static java.security.AccessController.getContext;
             }
         };
 
-        private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback =
+                new ResultCallback<PlaceBuffer>() {
             @Override
             public void onResult(@NonNull PlaceBuffer places) {
                 //callback to get all information on the place //receive request and callback
@@ -937,10 +966,11 @@ import static java.security.AccessController.getContext;
         }
 
         @Override
-        public void onButtonClicked(String text, String text1) {
+        public void onButtonClicked() {
             //onButtonClicked(String text) changes the main activity text
-              mTextView.setText(text);
-            Toast.makeText(this, text1,Toast.LENGTH_SHORT).show();
+              //mTextView.setText(text);
+
+            //  Toast.makeText(this, text,Toast.LENGTH_SHORT).show();
 //            confirmInput();
 //            validateTitle();
 //            validateDescription();

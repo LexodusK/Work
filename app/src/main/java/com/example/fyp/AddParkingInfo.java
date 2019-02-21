@@ -1,11 +1,13 @@
 package com.example.fyp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.example.fyp.MainActivity;
+
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -26,7 +30,6 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
 
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,26 +37,35 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
         View v = inflater.inflate(R.layout.addparkinginfo, container, false);
         textInputTitle = v.findViewById(R.id.Title);
         textInputDescription = v.findViewById(R.id.Description);
+        Button mConfirmParkingAdd = v.findViewById(R.id.button_confirmAddParkingLot);
+        Button mCancelParkingAdd = v.findViewById(R.id.button_cancelAddParkingLot);
+//        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
 
-
-
-//        ImageView img = v.findViewById(R.id.ic_edit);
-        Button btn = v.findViewById(R.id.button_confirmAddParkingLot);
-        btn.setOnClickListener(new View.OnClickListener() {
+        // change text
+        // save GPS and proceed to open fragment to save details of parking
+        mConfirmParkingAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                // need longlat from mainactivity then save it to the database along
+                // with additional details
+                confirmInput();
 
-                //send variables in onButtonClicked(" ") back to main activity, if string then send the string back
-                //if onButtonClicked("Button 1 clicked") then it will change the main activity text
-//                if(v != null){
-//                    mListener.onButtonClicked("Changed this stupid thing"," dadda");
-
-                   confirmInput();
-//                }
-
-
+                //after confirm input, the details saved to that marker will have to go in the array list
+                //the array list is passed to the firebase with longlat, parking info, title, description
+                //if marker is deleted, it is removed from array list
+                
 
 
+//                Toast.makeText(getActivity(), "addddd", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // cancel the choice
+        mCancelParkingAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+//                Toast.makeText(getActivity(), "222222", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -65,26 +77,26 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
 
         //void onButtonClicked(String text); to pass any string in mListener.onButtonClicked
         //to change to text in Main activity
-        void onButtonClicked(String text, String text1);
+        void onButtonClicked();
 
-      }
-
+    }
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         //context is the activity which attaches the dialog
-        try{
+        try {
             mListener = (BottomSheetListener) context;
-        }catch (ClassCastException e){
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-            + " must implement BottomSheetListener");
+                    + " must implement BottomSheetListener");
         }
 
     }
 
-    private boolean validateTitle(){
+
+private boolean validateTitle(){
         String TitleInput = textInputTitle.getEditText().getText().toString().trim();
 
         if(TitleInput.isEmpty()){
@@ -113,6 +125,7 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
         }
     }
 
+
 //    public void confirmInput(View v){
 //        //one vertical bar because both must be called; otherwise first will only be false
 //        if(!validateDescription() | !validateTitle()){
@@ -128,7 +141,7 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
 //    }
 //
 //
-    public void confirmInput(){
+ public void confirmInput(){
         //one vertical bar because both must be called; otherwise first will only be false
         if(!validateDescription() | !validateTitle()){
 
@@ -137,13 +150,16 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
 
         String input = "Title: " + textInputTitle.getEditText().getText().toString();
         input += "\n";
-        input += "Description" + textInputDescription.getEditText().getText().toString();
+        input += "Description: " + textInputDescription.getEditText().getText().toString();
         Toast.makeText(getActivity(), input, Toast.LENGTH_SHORT).show();
         Log.d(TAG, "confirmInput: Saved input" + input);
         dismiss();
     }
 
 }
+
+
+
 //    Button btn = (Button) findViewById(R.id.button_confirmAddParkingLot);
 //
 //                    btn.setOnClickListener(new View.OnClickListener() {
