@@ -16,6 +16,7 @@ import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -75,7 +76,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.example.fyp.Login;
+import com.example.fyp.AddParkingInfo;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
@@ -90,7 +91,9 @@ import static java.security.AccessController.getContext;
 
     public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
-            AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener {
+            AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
+            parkinginfo_with_edit_delete.BottomSheetListener //, AddParkingInfo.OnDataPass
+    {
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -233,6 +236,7 @@ import static java.security.AccessController.getContext;
 
 
         }
+/*
 
         private boolean validateTitle(){
             String TitleInput = textInputTitle.getEditText().getText().toString().trim();
@@ -278,6 +282,7 @@ import static java.security.AccessController.getContext;
 
         }
 
+*/
 
 
         private void getUserDetails (){
@@ -577,6 +582,20 @@ import static java.security.AccessController.getContext;
                 }
             });
 
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+
+                    parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
+                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+
+                    Toast.makeText(MainActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content), "clickity click", Snackbar.LENGTH_LONG).show();
+                    return false;
+
+                }
+            });
+
 
                 mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
@@ -597,30 +616,31 @@ import static java.security.AccessController.getContext;
                             // array list to store the markers;
                             // need a way to remove the selected marker, while retaining other markers
                             // add the marker to the list when user click add parking -> filled in details -> save details
-                            mMarkersList.add(point);
 
 
 
-
-                            Log.d(TAG, "onMapLongClick: " + mMarkersList.toString() + "\n");
+                            Log.d(TAG, "onMapLongClick: Array is now " + mMarkersList.toString() + "\n");
                             Log.d(TAG, "onMapLongClick: lat is " + Double.toString(point.latitude) +
-                                                            "long is " + Double.toString(point.longitude));
+                                                            " long is " + Double.toString(point.longitude));
 
+
+
+                            //open the bottom sheet for the add parking or cancel window
                             AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
                             bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
 
-
-
-
-
+                            // Marker icon
                             IconGenerator iconFactory = new IconGenerator(MainActivity.this);
                             mMap.addMarker(new MarkerOptions()
                                     .position(point)
-                                    .title("You are here")
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
                                     )).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
 
+        //<-------------------- if (user clicked add) ------------------------->
+                            mMarkersList.add(point);
 
+
+//                            Toast.makeText(MainActivity.this, textInputTitle.getEditText().getText().toString(), Toast.LENGTH_SHORT).show();
                         }
                             //only users who login can add a marker
                           else{
@@ -966,18 +986,16 @@ import static java.security.AccessController.getContext;
         }
 
         @Override
-        public void onButtonClicked() {
-            //onButtonClicked(String text) changes the main activity text
-              //mTextView.setText(text);
-
-            //  Toast.makeText(this, text,Toast.LENGTH_SHORT).show();
-//            confirmInput();
-//            validateTitle();
-//            validateDescription();
-
-
-         //   Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
+        public void onButtonClicked(String t, String d) {
+            String input = "Marker title added as " + t;
+            Snackbar.make(findViewById(android.R.id.content), input, Snackbar.LENGTH_LONG).show();
+            mMarkersList.add(t);
+            mMarkersList.add(d);
         }
+
+        // save a particular marker's long lat with the type, title and description
+                                                         // lat  lng     type           title                   description
+        // index the five items as one key e.g. Array[0] = {14, -122, Free Parking, FCSIT Student Parking, For students only}
 
 
     }

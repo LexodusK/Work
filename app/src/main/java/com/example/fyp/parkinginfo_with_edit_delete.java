@@ -1,61 +1,49 @@
 package com.example.fyp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
-import com.example.fyp.MainActivity;
-import com.example.fyp.Login;
 
-import static android.support.constraint.Constraints.TAG;
 
-public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
+public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment {
     //set main activity as the listener
     private BottomSheetListener mListener;
     //    private TextInputLayout textInputTitle;
 //    private TextInputLayout textInputDescription;
 
-/*-----------    This is to call the addparkinginfo window to add details      ---------------*/
+    /*-----------    This is to call the addparkinginfo window to add details      ---------------*/
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //inflate the layout for the fragment
-        View v = inflater.inflate(R.layout.addcancelparkingbottomsheet, container, false);
+        View v = inflater.inflate(R.layout.parkinginfo_with_edit_delete, container, false);
 //        textInputTitle = v.findViewById(R.id.Title);
 //        textInputDescription = v.findViewById(R.id.Description);
-        RelativeLayout mAddParking = v.findViewById(R.id.bottom_sheet_add_parking);
-        RelativeLayout mCancelParking = v.findViewById(R.id.bottom_sheet_cancel);
+        Button mEditParking = v.findViewById(R.id.button_editparkinglotinfo);
+        Button mDeleteParking = v.findViewById(R.id.button_deleteparkinglotinfo);
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
 
         // change text
         // save GPS and proceed to open fragment to save details of parking
-        mAddParking.setOnClickListener(new View.OnClickListener() {
+        mEditParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // need longlat from mainactivity then save it to the database along
                 // with additional details
-                AddParkingInfo bottomSheet2 = new AddParkingInfo();
-                bottomSheet2.show(getFragmentManager(), "BottomSheetAdd");
                 dismiss();
             }
         });
 
         // cancel the choice
-        mCancelParking.setOnClickListener(new View.OnClickListener() {
+        mDeleteParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -72,7 +60,7 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
 
         //void onButtonClicked(String text); to pass any string in mListener.onButtonClicked
         //to change to text in Main activity
-//        void onButtonClicked2();
+//        void onButtonClicked3();
 
     }
 
@@ -90,4 +78,3 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
 
     }
 }
-

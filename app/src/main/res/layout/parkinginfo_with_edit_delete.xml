@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/parkinglottitlelayout">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="19sp"
+        android:text="FCSIT staff parking"
+        android:id="@+id/varying_parkinglottitle"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglottitlelayout"
+        android:id="@+id/parkinglottypelayout"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Parking Lot Type :"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/parkinglottypetext"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/parkinglottypetext"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/varying_parkinglottype"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglottypelayout"
+        android:id="@+id/parkinglotspaceslayout"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Parking Spaces :"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/parkinglotspacestext"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/parkinglotspacestext"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/varying_parkinglotspaces"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglotspaceslayout"
+        android:id="@+id/parkinglotinfolayout"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Additional Information :"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/parkinglotinfotext"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/parkinglotinfotext"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/varying_parkinglotinfo"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglotinfolayout"
+        android:id="@+id/parkinglotbuttonslayout"
+        android:layout_marginTop="15dp">
+
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="30dp"
+            android:text="Edit"
+            android:id="@+id/button_editparkinglotinfo"
+            android:layout_marginStart="50dp"
+            android:background="#00A86B"/>
+
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="40dp"
+            android:text="Delete"
+            android:id="@+id/button_deleteparkinglotinfo"
+            android:layout_toRightOf="@+id/button_editparkinglotinfo"
+            android:background="#FF0000"/>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

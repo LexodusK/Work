@@ -29,17 +29,18 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
     private TextInputLayout textInputDescription;
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //inflate the layout for the fragment
         View v = inflater.inflate(R.layout.addparkinginfo, container, false);
-        textInputTitle = v.findViewById(R.id.Title);
-        textInputDescription = v.findViewById(R.id.Description);
+         textInputTitle = v.findViewById(R.id.Title);
+         textInputDescription = v.findViewById(R.id.Description);
         Button mConfirmParkingAdd = v.findViewById(R.id.button_confirmAddParkingLot);
         Button mCancelParkingAdd = v.findViewById(R.id.button_cancelAddParkingLot);
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
+
+
 
         // change text
         // save GPS and proceed to open fragment to save details of parking
@@ -49,11 +50,17 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
                 // need longlat from mainactivity then save it to the database along
                 // with additional details
                 confirmInput();
+                if (!validateTitle() | !validateDescription()){
+                 return;
+                }
+                mListener.onButtonClicked(textInputTitle.getEditText().getText().toString(),
+                                          textInputDescription.getEditText().getText().toString());
+
 
                 //after confirm input, the details saved to that marker will have to go in the array list
                 //the array list is passed to the firebase with longlat, parking info, title, description
                 //if marker is deleted, it is removed from array list
-                
+
 
 
 //                Toast.makeText(getActivity(), "addddd", Toast.LENGTH_SHORT).show();
@@ -74,17 +81,32 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
     }
 
     public interface BottomSheetListener {
-
         //void onButtonClicked(String text); to pass any string in mListener.onButtonClicked
         //to change to text in Main activity
-        void onButtonClicked();
+        void onButtonClicked(String t, String d);
 
     }
+
+    /*//declare interface
+    public interface OnDataPass{
+         void onDataPass(String data);
+    }
+
+    //connect class implementation to interface of fragment to onAttach
+    OnDataPass dataPasser;
+
+    //handle passing of data by calling dataPasser object
+    public void passData(String data){
+        dataPasser.onDataPass(data);
+    }*/
+
+    //987-991 MainActivity
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+//        dataPasser = (OnDataPass) context;
         //context is the activity which attaches the dialog
         try {
             mListener = (BottomSheetListener) context;
@@ -125,22 +147,6 @@ private boolean validateTitle(){
         }
     }
 
-
-//    public void confirmInput(View v){
-//        //one vertical bar because both must be called; otherwise first will only be false
-//        if(!validateDescription() | !validateTitle()){
-//            return;
-//        }
-//
-//        String input = "Title: " + textInputTitle.getEditText().getText().toString();
-//        input += "\n";
-//        input += "Description" + textInputDescription.getEditText().getText().toString();
-//
-//        Log.d(TAG, "confirmInput: Saved input" + input);
-//
-//    }
-//
-//
  public void confirmInput(){
         //one vertical bar because both must be called; otherwise first will only be false
         if(!validateDescription() | !validateTitle()){
