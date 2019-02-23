@@ -57,6 +57,7 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
                                           textInputDescription.getEditText().getText().toString());
 
 
+
                 //after confirm input, the details saved to that marker will have to go in the array list
                 //the array list is passed to the firebase with longlat, parking info, title, description
                 //if marker is deleted, it is removed from array list

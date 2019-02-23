@@ -5,6 +5,9 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
+
+//Test to insert data into database, not used in final implementation
+
 public class UserLocation {
 
     private GeoPoint geo_point;
