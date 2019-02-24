@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:textColor="#000"
         android:textSize="19sp"
-        android:text="FCSIT staff parking"
         android:id="@+id/varying_parkinglottitle"/>
 
     </RelativeLayout>

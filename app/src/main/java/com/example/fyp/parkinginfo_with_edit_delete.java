@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment {
     //set main activity as the listener
     private BottomSheetListener mListener;
+    private ParkingDetails mParkingDetails;
     //    private TextInputLayout textInputTitle;
 //    private TextInputLayout textInputDescription;
 
@@ -29,7 +31,13 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment {
 //        textInputDescription = v.findViewById(R.id.Description);
         Button mEditParking = v.findViewById(R.id.button_editparkinglotinfo);
         Button mDeleteParking = v.findViewById(R.id.button_deleteparkinglotinfo);
+        TextView mText = v.findViewById(R.id.varying_parkinglottitle);
+
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
+        mParkingDetails = (ParkingDetails) getArguments().getSerializable("key");
+
+
+        mText.setText(mParkingDetails.getTitle());
 
         // change text
         // save GPS and proceed to open fragment to save details of parking
@@ -38,6 +46,7 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment {
             public void onClick(View view) {
                 // need longlat from mainactivity then save it to the database along
                 // with additional details
+
                 dismiss();
             }
         });

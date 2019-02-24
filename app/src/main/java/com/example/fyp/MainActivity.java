@@ -112,7 +112,7 @@ import static java.security.AccessController.getContext;
 
 
             mMap = googleMap;
-
+            updateMapWithDatabaseMarker();
             //if permission is granted, then proceed
             if (mLocationPermissionGranted) {
 //            initMap();
@@ -128,9 +128,11 @@ import static java.security.AccessController.getContext;
 
                 init();
 
-                CollectionReference locationRef = mDb.collection(getString(R.string.collection_users)).document(FirebaseAuth.getInstance().getUid())
-                        .collection(getString(R.string.collection_parking_details)); //doc = IDed by id
 
+
+                    // refer to location of database (in this case users then get ID of user and put a collection named "parking details"
+                /*CollectionReference locationRef = mDb.collection(getString(R.string.collection_users));; //doc = IDed by id    //outer loop thru Users > ID
+                final CollectionReference innerLocationRef = mDb.collection(getString(R.string.collection_users));        //inner loop Users > ID > Parking Details > ID
                 locationRef.get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -138,26 +140,38 @@ import static java.security.AccessController.getContext;
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
 //                                        ParkingDetails padet = task.getResult().toObject(ParkingDetails.class);
-                                        Log.d(TAG, document.getId() + " idd => " + document.toObject(ParkingDetails.class));
-                                        ParkingDetails padet = document.toObject(ParkingDetails.class);
+                                        innerLocationRef.document(document.getId())
+                                                .collection(getString(R.string.collection_parking_details)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                        mMarkersList.add(padet);
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot innerDocument : task.getResult()) {
+                                                        Log.d(TAG, innerDocument.getId() + " idd => " + innerDocument.toObject(ParkingDetails.class));
+                                                        ParkingDetails padet = innerDocument.toObject(ParkingDetails.class);
+                                                        mMarkersList.add(padet);
+                                                    }
+                                                    Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
+                                                    IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                                                    for (int i = 0;i<mMarkersList.size();i++){
+                                                        ParkingDetails pDet = (ParkingDetails) mMarkersList.get(i);
+                                                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
+                                                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
+                                                    }
+
+                                                    }
+                                            }
+                                        });
 
                                     }
 
-                                    Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
-                                    IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                                    for (int i = 0;i<mMarkersList.size();i++){
-                                        ParkingDetails pDet = (ParkingDetails) mMarkersList.get(i);
-                                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
-                                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
-                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
-                                    }
+
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
                             }
-                        });
+                        });*/
 
 
 
@@ -186,6 +200,7 @@ import static java.security.AccessController.getContext;
         private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
         private static final float DEFAULT_ZOOM = 15f;
         private static final int PLACE_PICKER_REQUEST = 1;
+        private static GeoPoint onmaplongclickedpoint;
         private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
                 //encompass the entire world
                 new LatLng(-40,-168), new LatLng(71,136));
@@ -216,6 +231,7 @@ import static java.security.AccessController.getContext;
         private TextInputLayout textInputDescription;
         private TextView mTextView;
         private ArrayList mMarkersList;
+
 
 
         @Override
@@ -619,14 +635,40 @@ import static java.security.AccessController.getContext;
             });
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                Bundle bundle = new Bundle();
                 @Override
+
                 public boolean onMarkerClick(Marker marker) {
+                    ParkingDetails pDet = new ParkingDetails();
+
+                    for (int i=0; i < mMarkersList.size(); i++){
+                        pDet = (ParkingDetails) mMarkersList.get(i);
+                        LatLng currentMarker = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+                        String currentMarkerTitle = new String(pDet.getTitle());
+                        Log.d(TAG, "onMarkerClick: " + currentMarker + " " + currentMarkerTitle + " " + marker.getPosition());
+                           if (marker.getPosition().longitude == currentMarker.longitude && marker.getPosition().latitude == currentMarker.latitude) {
+//                               Snackbar.make(findViewById(android.R.id.content), currentMarkerTitle, Snackbar.LENGTH_LONG).show();
+//                               Toast.makeText(MainActivity.this, "this is " + currentMarkerTitle, Toast.LENGTH_SHORT).show();
+                               bundle.putSerializable("key", pDet);
+
+                         }
+                    }
+
+//                    ParkingDetails pDet = new ParkingDetails();
+//                    for (int i = 0;i<mMarkersList.size();i++){
+//                        pDet = (ParkingDetails) mMarkersList.get(i);
+//                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+//                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
+//                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
+//                    }
+
 
                     parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
+                    bottomSheet.setArguments(bundle);
                     bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
 
-                    Toast.makeText(MainActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
-                    Snackbar.make(findViewById(android.R.id.content), "clickity click", Snackbar.LENGTH_LONG).show();
+//                    Toast.makeText(MainActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
+//                    Snackbar.make(findViewById(android.R.id.content), "clickity click", Snackbar.LENGTH_LONG).show();
 //                    marker.remove();
                     return false;
 
@@ -640,8 +682,13 @@ import static java.security.AccessController.getContext;
 
                         if (FirebaseAuth.getInstance().getUid()!=null) {
                             Log.d(TAG, "onMapLongClick: Logged in as " + FirebaseAuth.getInstance().getUid());
-                            mMap.clear();
+//                            mMap.clear();
                             moveCamera(new LatLng(point.latitude, point.longitude), DEFAULT_ZOOM, "" );
+
+                            onmaplongclickedpoint = new GeoPoint(point.latitude, point.longitude);
+//                            mParkingDetails.setGeo_point(onmaplongclickedpoint);
+
+
 
                           /*  if(!mMarkersList.isEmpty()){
                                 for ( int mMarkerIndex = 0; mMarkerIndex < mMarkersList.size() ; mMarkerIndex++){
@@ -1038,11 +1085,16 @@ import static java.security.AccessController.getContext;
                 Log.d(TAG, "onButtonClicked: user doc id: "+ FirebaseAuth.getInstance().getUid());
                 mParkingDetails.setDescription(d);
                 mParkingDetails.setTitle(t);
-                mParkingDetails.setGeo_point(mUserLocation.getGeo_point());
+//                mParkingDetails.setGeo_point(mUserLocation.getGeo_point());
+                mParkingDetails.setGeo_point(onmaplongclickedpoint);
+                mParkingDetails.setUser_id(FirebaseAuth.getInstance().getUid());
+                mParkingDetails.setMarker_id(locationRef.document().getId());
+
 
                 Log.d(TAG, "onButtonClicked: collection "+locationRef.get());
 
-                DocumentReference docRef = locationRef.document(locationRef.document().getId());
+//                DocumentReference docRef = locationRef.document(locationRef.document().getId());
+                DocumentReference docRef = locationRef.document(mParkingDetails.getMarker_id());
                 Log.d(TAG, "onButtonClicked: parking id: "+ docRef.getId());
                 docRef.set(mParkingDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -1055,7 +1107,8 @@ import static java.security.AccessController.getContext;
                         }
                     }
                 });
-
+                mMap.clear();
+                updateMapWithDatabaseMarker();
                 //to log the list all documents
 //                locationRef.get()
 //                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1094,6 +1147,54 @@ import static java.security.AccessController.getContext;
                                                          // lat  lng     type           title                   description
         // index the five items as one key e.g. Array[0] = {14, -122, Free Parking, FCSIT Student Parking, For students only}
 
+
+        public void updateMapWithDatabaseMarker(){
+            mMarkersList.clear();
+            CollectionReference locationRef = mDb.collection(getString(R.string.collection_users));; //doc = IDed by id    //outer loop thru Users > ID
+                final CollectionReference innerLocationRef = mDb.collection(getString(R.string.collection_users));        //inner loop Users > ID > Parking Details > ID
+                locationRef.get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                                        ParkingDetails padet = task.getResult().toObject(ParkingDetails.class);
+                                        innerLocationRef.document(document.getId())
+                                                .collection(getString(R.string.collection_parking_details)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot innerDocument : task.getResult()) {
+                                                        Log.d(TAG, innerDocument.getId() + " idd => " + innerDocument.toObject(ParkingDetails.class));
+                                                        ParkingDetails padet = innerDocument.toObject(ParkingDetails.class);
+                                                        mMarkersList.add(padet);
+                                                    }
+                                                    Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
+                                                    Log.d(TAG, "on click: Array size is now " + mMarkersList.size() + "\n");
+                                                    IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                                                    ParkingDetails pDet = new ParkingDetails();
+                                                    for (int i = 0;i<mMarkersList.size();i++){
+                                                        pDet = (ParkingDetails) mMarkersList.get(i);
+                                                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+                                                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
+                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
+                                                    }
+
+
+                                                    }
+                                            }
+                                        });
+
+                                    }
+
+
+                                } else {
+                                    Log.d(TAG, "Error getting documents: ", task.getException());
+                                }
+                            }
+                        });
+        }
 
     }
 

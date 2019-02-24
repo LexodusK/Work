@@ -3,30 +3,35 @@ package com.example.fyp;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ParkingDetails {
+public class ParkingDetails implements Serializable {
 
 
     private GeoPoint geo_point;
     //pass null to timestamp = insert timesnap instantly
     private @ServerTimestamp Date timestamp;
-    private User user;
+    private String user_id;
     private String typeofParking;
     private String numberofParkingspots;
     private String Title;
     private String Description;
+    private String marker_id;
 
     public ParkingDetails(String typeofParking, String numberofParkingspots, String Title, String Description,
-                          GeoPoint geo_point, Date timestamp, User user) {
+                          GeoPoint geo_point, Date timestamp, String user_id, String marker_id) {
         this.typeofParking = typeofParking;
         this.numberofParkingspots = numberofParkingspots;
         this.Title = Title;
         this.Description = Description;
         this.geo_point = geo_point;
         this.timestamp = timestamp;
-        this.user = user;
+        this.user_id = user_id;
+        this.marker_id = marker_id;
     }
+
+
 
     public ParkingDetails() {
     }
@@ -79,12 +84,20 @@ public class ParkingDetails {
         this.timestamp = timestamp;
     }
 
-    public User getUser() {
-        return user;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getMarker_id() {
+        return marker_id;
+    }
+
+    public void setMarker_id(String marker_id) {
+        this.marker_id = marker_id;
     }
 
     @Override
@@ -92,11 +105,12 @@ public class ParkingDetails {
         return "ParkingDetails{" +
                 "geo_point=" + geo_point +
                 ", timestamp=" + timestamp +
-                ", user=" + user +
+                ", user_id='" + user_id + '\'' +
                 ", typeofParking='" + typeofParking + '\'' +
                 ", numberofParkingspots='" + numberofParkingspots + '\'' +
                 ", Title='" + Title + '\'' +
                 ", Description='" + Description + '\'' +
+                ", marker_id='" + marker_id + '\'' +
                 '}';
     }
 }
