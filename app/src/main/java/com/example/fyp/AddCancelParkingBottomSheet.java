@@ -1,6 +1,7 @@
 package com.example.fyp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,6 +40,7 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
 //        textInputDescription = v.findViewById(R.id.Description);
         RelativeLayout mAddParking = v.findViewById(R.id.bottom_sheet_add_parking);
         RelativeLayout mCancelParking = v.findViewById(R.id.bottom_sheet_cancel);
+
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
 
         // change text
@@ -50,6 +52,7 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
                 // with additional details
                 AddParkingInfo bottomSheet2 = new AddParkingInfo();
                 bottomSheet2.show(getFragmentManager(), "BottomSheetAdd");
+                mListener.onDismiss(false);
                 dismiss();
             }
         });
@@ -59,7 +62,10 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
 
+                mListener.onDismiss(true);
                 dismiss();
+
+
 //                Toast.makeText(getActivity(), "222222", Toast.LENGTH_SHORT).show();
             }
         });
@@ -68,7 +74,16 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
 
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+//        super.onDismiss(dialog);
+        mListener.onDismiss(true);
+
+    }
+
     public interface BottomSheetListener {
+         void onDismiss(boolean bool);
+
 
         //void onButtonClicked(String text); to pass any string in mListener.onButtonClicked
         //to change to text in Main activity

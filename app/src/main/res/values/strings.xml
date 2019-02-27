@@ -55,5 +55,15 @@
     <string name="action_chatroom_user_list">User list</string>
     <string name="action_profile">Profile</string>
 
+    <string-array name="numbers">
+        <item> 1 &#8211; 3</item>
+        <item> 4 &#8211; 10</item>
+        <item> 11 &#8211; 50</item>
+        <item> 51 &#8211; 100</item>
+        <item> 100+ </item>
+
+
+    </string-array>
+
 
 </resources>

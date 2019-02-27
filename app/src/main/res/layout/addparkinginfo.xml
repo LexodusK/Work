@@ -1,25 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="500dp"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="top"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="15dp"
     tools:context="com.example.fyp.MainActivity"
     android:id="@+id/addParkingDetailsForm">
 
-
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/top"
+        android:layout_marginBottom="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:text="Select parking lot"/>
+
+    </RelativeLayout>
+
+   <RelativeLayout
+       android:layout_width="30dp"
+       android:layout_height="wrap_content"
+       android:id="@+id/icons"
+       android:layout_below="@+id/top">
+
+ <ImageView
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:src="@drawable/ic_findcar"
+     android:layout_marginTop="5dp"
+     android:id="@+id/icon1"/>
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_paidparking"
+          android:layout_below="@+id/icon1"
+          android:id="@+id/icon2"
+          android:layout_marginTop="7dp"/>
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_multistorey"
+          android:layout_marginTop="8dp"
+          android:id="@+id/icon3"
+          android:layout_below="@+id/icon2"/>
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_disabled"
+          android:layout_marginTop="8dp"
+          android:id="@+id/icon4"
+          android:layout_below="@+id/icon3"/>
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_ev"
+          android:layout_marginTop="8dp"
+          android:id="@+id/icon5"
+          android:layout_below="@+id/icon4"/>
+
+   </RelativeLayout>
+
+
+
+       <RelativeLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/relayout_topPtype"
+           android:layout_toRightOf="@id/icons"
+           android:layout_below="@+id/top">
+          <RadioGroup
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/ParkingLotType"
+              android:checkedButton="@id/radio_one">
+             <RadioButton
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/radio_one"
+                 android:text="Free Parking lot"
+                 />
+             <RadioButton
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/radio_two"
+                 android:text="Paid Parking lot"
+                 />
+             <RadioButton
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/radio_three"
+                 android:text="Multistorey Parking lot"
+                 />
+             <RadioButton
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/radio_four"
+                 android:text="Disabled Parking"
+                />
+             <RadioButton
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/radio_five"
+                 android:text="Electric vehicle lot"
+                 />
+
+          </RadioGroup>
+
+       </RelativeLayout>
+
+   <RelativeLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/icons"
+       android:id="@+id/numparkspots"
+       android:layout_marginTop="10dp"
+       android:layout_marginLeft="5dp">
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Number of parking spots"
+          android:id="@+id/numparkspotstext"
+
+          android:textColor="#000"/>
+
+       <Spinner
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="20dp"
+           android:layout_toRightOf="@+id/numparkspotstext"
+           android:id="@+id/ParkingLotSpaces">
+
+       </Spinner>
+    <!--  <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_edit"
+          android:layout_marginLeft="0dp"
+          android:id="@+id/ParkingLotSpaces"
+          android:background="@drawable/background_border"
+          android:layout_toEndOf="@+id/spinner"/>-->
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_toEndOf="@+id/ParkingLotSpaces"
+           android:id="@+id/varying_numparkspots"
+           android:layout_marginLeft="10dp"
+           android:textColor="#000"/>
+
+   </RelativeLayout>
+
+
+
    <RelativeLayout
        android:layout_width="match_parent"
-       android:layout_height="80dp"
-       android:id="@+id/toptitle">
+       android:layout_height="wrap_content"
+       android:id="@+id/toptitle"
+       android:layout_below="@+id/numparkspots">
 
       <android.support.design.widget.TextInputLayout
           android:layout_width="match_parent"
@@ -33,7 +177,9 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:hint="Title"
-             android:textColor="#000"/>
+             android:textColor="#000"
+             android:singleLine="true"
+             android:textSize="15sp"/>
 
       </android.support.design.widget.TextInputLayout>
 
@@ -41,7 +187,7 @@
 
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:id="@+id/bottomdescription"
     android:layout_below="@+id/toptitle">
 
@@ -55,14 +201,16 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:hint="Description"
-          android:gravity="bottom"/>
+          android:gravity="bottom"
+          android:singleLine="true"
+          android:textSize="15sp"/>
 
    </android.support.design.widget.TextInputLayout>
 
 </RelativeLayout>
 
 
-   <RelativeLayout
+      <RelativeLayout
        android:layout_width="match_parent"
        android:layout_height="50dp"
        android:layout_below="@+id/bottomdescription"
@@ -83,9 +231,9 @@
           android:layout_toRightOf="@+id/button_confirmAddParkingLot"
           android:layout_marginLeft="25dp"/>
 
-   </RelativeLayout>
-    </RelativeLayout>
+      </RelativeLayout>
+</RelativeLayout>
 
-</FrameLayout>
+
 
     <!--android:onClick="confirmInput"-->

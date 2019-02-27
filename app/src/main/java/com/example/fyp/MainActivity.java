@@ -11,6 +11,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
@@ -38,6 +39,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +66,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -230,6 +233,9 @@ import static java.security.AccessController.getContext;
         private TextInputLayout textInputTitle;
         private TextInputLayout textInputDescription;
         private TextView mTextView;
+        private TextView mtesttext;
+        private String mtesttextemailstring;
+        private TextView emaildisplay;
         private ArrayList mMarkersList;
 
 
@@ -245,6 +251,8 @@ import static java.security.AccessController.getContext;
             mDb = FirebaseFirestore.getInstance();
             textInputTitle = findViewById(R.id.Title);
             textInputDescription = findViewById(R.id.Description);
+//            emaildisplay = (TextView) findViewById(R.id.varying_email);
+//            mtesttext = findViewById(R.id.testtext);
 //            mTextView = (TextView) findViewById(R.id.ic_someText);
             mMarkersList = new ArrayList();
 
@@ -265,12 +273,15 @@ import static java.security.AccessController.getContext;
             NavigationView navigationView = findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
 
+
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                     R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
             drawer.addDrawerListener(toggle);
             //take care of rotating hamburger menu
             toggle.syncState();
+
+
 
 
             Log.d(TAG, "onCreate: synced");
@@ -339,7 +350,17 @@ import static java.security.AccessController.getContext;
 
         private void getUserDetails (){
 
-       //if (user == logged in) then save to database
+//            if (FirebaseAuth.getInstance().getUid() != null){
+//                emaildisplay.setText(FirebaseAuth.getInstance().getUid());
+//            }else{
+//            try{
+//                emaildisplay.setText("Please help to contribute!");
+//            }catch (NullPointerException e){
+//                Log.d(TAG, "getUserDetails: " + e.getMessage());
+//            }
+//            }
+
+            //if (user == logged in) then save to database
             Log.d(TAG, "getUserDetails: ID is " + FirebaseAuth.getInstance().getUid());
          if (FirebaseAuth.getInstance().getUid()!=null){
 
@@ -357,7 +378,16 @@ import static java.security.AccessController.getContext;
                              User user = task.getResult().toObject(User.class);
                              mUserLocation.setUser(user);
                              ((UserClient)getApplicationContext()).setUser(user);
+
+//                             DocumentSnapshot documentSnapshot = task.getResult();
+//                             Log.d(TAG, "onComplete: " + documentSnapshot.getString("email") );
+//                             mtesttextemailstring = documentSnapshot.getString("email");
+//                             Log.d(TAG, "onComplete: " + mtesttextemailstring);
+//                             emaildisplay.setText(mtesttextemailstring);
+
+
                              getDeviceLocation();
+
                          }
                     }
                 });
@@ -553,6 +583,8 @@ import static java.security.AccessController.getContext;
             Log.d(TAG, "init: initializing");
 
 
+
+
             // auto text completion
 
             mGoogleApiClient = new GoogleApiClient
@@ -639,20 +671,35 @@ import static java.security.AccessController.getContext;
                 @Override
 
                 public boolean onMarkerClick(Marker marker) {
+                    //entire class
                     ParkingDetails pDet = new ParkingDetails();
 
-                    for (int i=0; i < mMarkersList.size(); i++){
-                        pDet = (ParkingDetails) mMarkersList.get(i);
-                        LatLng currentMarker = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
-                        String currentMarkerTitle = new String(pDet.getTitle());
-                        Log.d(TAG, "onMarkerClick: " + currentMarker + " " + currentMarkerTitle + " " + marker.getPosition());
-                           if (marker.getPosition().longitude == currentMarker.longitude && marker.getPosition().latitude == currentMarker.latitude) {
+
+                        try{
+
+
+                        for (int i = 0; i < mMarkersList.size(); i++) {
+                            pDet = (ParkingDetails) mMarkersList.get(i);
+                            LatLng currentMarker = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+                            String currentMarkerTitle = new String(pDet.getTitle());
+                            Log.d(TAG, "onMarkerClick: " + currentMarker + " " + currentMarkerTitle + " " + marker.getPosition());
+                            //if the user's marker clicked on the saved in DB marker location
+                            if (marker.getPosition().longitude == currentMarker.longitude &&
+                                    marker.getPosition().latitude == currentMarker.latitude) {
 //                               Snackbar.make(findViewById(android.R.id.content), currentMarkerTitle, Snackbar.LENGTH_LONG).show();
 //                               Toast.makeText(MainActivity.this, "this is " + currentMarkerTitle, Toast.LENGTH_SHORT).show();
-                               bundle.putSerializable("key", pDet);
+                                bundle.putSerializable("key", pDet);
+                                break;
+                            }
+                            else {
+//                                    return true;
+//                                return false;
+                            }
+                        }
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
 
-                         }
-                    }
 
 //                    ParkingDetails pDet = new ParkingDetails();
 //                    for (int i = 0;i<mMarkersList.size();i++){
@@ -662,10 +709,12 @@ import static java.security.AccessController.getContext;
 //                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
 //                    }
 
-
                     parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
                     bottomSheet.setArguments(bundle);
                     bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+
+
+
 
 //                    Toast.makeText(MainActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
 //                    Snackbar.make(findViewById(android.R.id.content), "clickity click", Snackbar.LENGTH_LONG).show();
@@ -679,6 +728,8 @@ import static java.security.AccessController.getContext;
                 mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void  onMapLongClick(LatLng point) {
+
+
 
                         if (FirebaseAuth.getInstance().getUid()!=null) {
                             Log.d(TAG, "onMapLongClick: Logged in as " + FirebaseAuth.getInstance().getUid());
@@ -708,15 +759,30 @@ import static java.security.AccessController.getContext;
                                                             " long is " + Double.toString(point.longitude));
 
 
+                            IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                            Marker tMarker = mMap.addMarker(new MarkerOptions().position(point));
+                            tMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
+                            MarkerOptions option = new MarkerOptions().position(point);
+//                            mMap.addMarker(option);
 
+                            mMarkersList.add(tMarker);
+                            Log.d(TAG, "onMapLongClick: Last array is " + mMarkersList.get(mMarkersList.size()-1));
                             //open the bottom sheet for the add parking or cancel window
                             AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
                             bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
 
                             // Marker icon
-                            IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(point)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
+//                            if ()
+
+
+
+                            Log.d(TAG, "onMapLongClick: " + tMarker.getId());
+
+
+                            // else {
+//                            mMap.clear();
+//                            updateMapWithDatabaseMarker();
+//                            }
 
         //<-------------------- if (user clicked add) ------------------------->
 //                            mMarkersList.add(point);
@@ -1037,6 +1103,14 @@ import static java.security.AccessController.getContext;
             switch (item.getItemId()){
                 case R.id.parkingfine:
                     Toast.makeText(this, "clicked on parking fine", Toast.LENGTH_SHORT).show();
+                    try{
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://payportal.unimas.my/epayment/onlinefine/index2.jsp"));
+                        startActivity(intent);
+                    }catch (NullPointerException e){
+                        Toast.makeText(this, "No app can handle this request", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onNavigationItemSelected: " + e.getMessage() );
+
+                    }
 
                     break;
 
@@ -1067,14 +1141,17 @@ import static java.security.AccessController.getContext;
             return true;
         }
 
+
+        // Bottom sheet listener with parking details from there sent here to be stored in database
         @Override
-        public void onButtonClicked(String t, String d) {
+        public void onButtonClicked(String t, String d, String type, String spaces) {
             String input = "Marker title added as " + t;
             Snackbar.make(findViewById(android.R.id.content), input, Snackbar.LENGTH_LONG).show();
 //            mMarkersList.add(t);
 //            mMarkersList.add(d);
             mParkingDetails = new ParkingDetails();
-            mParkingDetails.setTypeofParking("Shaded");
+//            mParkingDetails.setTypeofParking("Shaded");
+
             if (mParkingDetails != null){
                 //mdb is the instantiated firebase                   user location in firebase (== "User Locations")
 
@@ -1085,10 +1162,13 @@ import static java.security.AccessController.getContext;
                 Log.d(TAG, "onButtonClicked: user doc id: "+ FirebaseAuth.getInstance().getUid());
                 mParkingDetails.setDescription(d);
                 mParkingDetails.setTitle(t);
+                mParkingDetails.setTypeofParking(type);
+                mParkingDetails.setNumberofParkingspots(spaces);
 //                mParkingDetails.setGeo_point(mUserLocation.getGeo_point());
                 mParkingDetails.setGeo_point(onmaplongclickedpoint);
                 mParkingDetails.setUser_id(FirebaseAuth.getInstance().getUid());
                 mParkingDetails.setMarker_id(locationRef.document().getId());
+
 
 
                 Log.d(TAG, "onButtonClicked: collection "+locationRef.get());
@@ -1196,5 +1276,17 @@ import static java.security.AccessController.getContext;
                         });
         }
 
+
+        @Override
+        public void onDismiss(boolean bool) {
+            if (mMarkersList.get(mMarkersList.size()-1).getClass() == Marker.class) {
+                Marker marker = (Marker) mMarkersList.get(mMarkersList.size() - 1);
+                marker.remove();
+                marker.remove();
+                marker.setVisible(false);
+                mMarkersList.remove(mMarkersList.size() - 1);
+                Log.d(TAG, "onDismiss: clik");
+            }
+        }
     }
 

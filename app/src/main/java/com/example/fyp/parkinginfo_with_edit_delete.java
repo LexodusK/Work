@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -31,13 +32,21 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment {
 //        textInputDescription = v.findViewById(R.id.Description);
         Button mEditParking = v.findViewById(R.id.button_editparkinglotinfo);
         Button mDeleteParking = v.findViewById(R.id.button_deleteparkinglotinfo);
-        TextView mText = v.findViewById(R.id.varying_parkinglottitle);
+        TextView mTexttitle = v.findViewById(R.id.varying_parkinglottitle);
+        TextView mTextDescription = v.findViewById(R.id.varying_parkinglotinfo);
+        TextView mTextPSpaces = v.findViewById(R.id.varying_parkinglotspaces);
+        TextView mTextPType = v.findViewById(R.id.varying_parkinglottype);
+//        Spinner spinner = v.findViewById(R.id.ParkingLotSpaces);
+
 
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
         mParkingDetails = (ParkingDetails) getArguments().getSerializable("key");
 
 
-        mText.setText(mParkingDetails.getTitle());
+        mTexttitle.setText(mParkingDetails.getTitle());
+        mTextDescription.setText(mParkingDetails.getDescription());
+        mTextPSpaces.setText(mParkingDetails.getNumberofParkingspots());
+        mTextPType.setText(mParkingDetails.getTypeofParking());
 
         // change text
         // save GPS and proceed to open fragment to save details of parking
@@ -47,6 +56,9 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment {
                 // need longlat from mainactivity then save it to the database along
                 // with additional details
 
+//                AddParkingInfo bottomSheet = new AddParkingInfo();
+//                bottomSheet.show(getFragmentManager(), "exampleBottomSheet");
+//                    open the edit with all info and edit from there
                 dismiss();
             }
         });

@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-     <item android:id="@+id/filter"
-         android:icon="@drawable/ic_filter"
-         android:title="@string/filter" />
+     <item android:title="Filter"
+         android:icon="@drawable/ic_filter">
+         <menu>
 
     <item android:id="@+id/shaded"
         android:icon="@drawable/ic_shaded"
@@ -30,7 +30,12 @@
     <item android:id="@+id/ev"
         android:icon="@drawable/ic_ev"
         android:title="Electric Vehicles" />
+         </menu>
+     </item>
 
+<group>
+    <item android:title="Other features">
+        <menu>
     <item android:id="@+id/parkingfine"
         android:icon="@drawable/ic_parkingfine"
         android:title="Pay Parking Fines" />
@@ -38,6 +43,11 @@
     <item android:id="@+id/findcar"
         android:icon="@drawable/ic_findcar"
         android:title="Find Car Location" />
+        </menu>
+    </item>
+</group>
+    <item android:title="Entry">
+<menu>
 
     <item android:id="@+id/register"
         android:icon="@drawable/ic_signup"
@@ -50,5 +60,6 @@
     <item android:id="@+id/signout"
         android:icon="@drawable/ic_signup"
         android:title="Sign Out"/>
-
+</menu>
+    </item>
 </menu>

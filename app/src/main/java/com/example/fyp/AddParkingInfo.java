@@ -12,21 +12,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.example.fyp.MainActivity;
 
 
 import static android.support.constraint.Constraints.TAG;
 
-public class AddParkingInfo extends BottomSheetDialogFragment {
+public class AddParkingInfo extends BottomSheetDialogFragment implements AdapterView.OnItemSelectedListener {
     //set main activity as the listener
     private BottomSheetListener mListener;
     private TextInputLayout textInputTitle;
     private TextInputLayout textInputDescription;
+    private RadioGroup radioInputParkingLotType;
+    private RadioButton radioButton;
+    private Spinner spinnerInputParkingSpaces;
+    private String text;
+    private RadioButton radButOne;
 
 
     @Nullable
@@ -36,10 +46,55 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
         View v = inflater.inflate(R.layout.addparkinginfo, container, false);
          textInputTitle = v.findViewById(R.id.Title);
          textInputDescription = v.findViewById(R.id.Description);
+         radioInputParkingLotType = v.findViewById(R.id.ParkingLotType);
+         spinnerInputParkingSpaces = v.findViewById(R.id.ParkingLotSpaces);
+         radButOne = v.findViewById(R.id.radio_one);
+
+
+
         Button mConfirmParkingAdd = v.findViewById(R.id.button_confirmAddParkingLot);
         Button mCancelParkingAdd = v.findViewById(R.id.button_cancelAddParkingLot);
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
 
+
+//        radButOne.setText("Free Parking Lot");
+//        Toast.makeText(getActivity(), "" + radButOne.isChecked(), Toast.LENGTH_SHORT).show();
+
+//        Toast.makeText(getActivity(), "" + radioButton.getText(), Toast.LENGTH_SHORT).show();
+        radioInputParkingLotType.check(R.id.radio_one);
+        radButOne.setChecked(true);
+        radioButton = radButOne;
+
+
+//        Toast.makeText(getActivity(), ""+ radioInputParkingLotType.getCheckedRadioButtonId(), Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onCreateView: " + radioInputParkingLotType.getCheckedRadioButtonId());
+
+
+        radioInputParkingLotType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+//                int radioId = radioInputParkingLotType.getCheckedRadioButtonId();
+//                radioButton = view.findViewById(radioId);
+//                if (radioButton.getText() != null){
+//                    radioButton = radButOne;
+//                }
+//                radioGroup.check(checkedId);
+
+                radioButton = (RadioButton) radioGroup.findViewById(checkedId);
+
+                Log.d(TAG, "onCheckedChanged: " + radioInputParkingLotType.getCheckedRadioButtonId());
+
+
+
+                Toast.makeText(getActivity(), ""+ radioButton.getText(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                                    R.array.numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerInputParkingSpaces.setAdapter(adapter);
+        spinnerInputParkingSpaces.setOnItemSelectedListener(this);
 
 
         // change text
@@ -49,12 +104,16 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
             public void onClick(View view) {
                 // need longlat from mainactivity then save it to the database along
                 // with additional details
+
                 confirmInput();
                 if (!validateTitle() | !validateDescription()){
                  return;
                 }
                 mListener.onButtonClicked(textInputTitle.getEditText().getText().toString(),
-                                          textInputDescription.getEditText().getText().toString());
+                                          textInputDescription.getEditText().getText().toString(),
+                                          radioButton.getText().toString(),
+                                          text);
+
 
 
 
@@ -81,10 +140,21 @@ public class AddParkingInfo extends BottomSheetDialogFragment {
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+         text = adapterView.getItemAtPosition(position).toString();
+        Toast.makeText(adapterView.getContext(), "" + text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
     public interface BottomSheetListener {
         //void onButtonClicked(String text); to pass any string in mListener.onButtonClicked
         //to change to text in Main activity
-        void onButtonClicked(String t, String d);
+        void onButtonClicked(String t, String d, String type, String spaces);
 
     }
 
@@ -162,6 +232,19 @@ private boolean validateTitle(){
         Log.d(TAG, "confirmInput: Saved input" + input);
         dismiss();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 
