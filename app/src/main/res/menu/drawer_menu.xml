@@ -1,13 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view">
+
 
      <item android:title="Filter"
          android:icon="@drawable/ic_filter">
-         <menu>
+ <menu>
 
-    <item android:id="@+id/shaded"
+
+     <item
+         app:actionLayout="@layout/widget_check"
+         tools:ignore="MenuTitle"
+         android:icon="@drawable/ic_shaded"/>
+     <item
+         app:actionLayout="@layout/widget_checkfree"
+         tools:ignore="MenuTitle"
+         android:icon="@drawable/ic_findcar"/>
+     <item
+         app:actionLayout="@layout/widget_checkpaid"
+         tools:ignore="MenuTitle"
+         android:icon="@drawable/ic_paidparking"/>
+     <item
+         app:actionLayout="@layout/widget_checkmultistorey"
+         tools:ignore="MenuTitle"
+         android:icon="@drawable/ic_multistorey"/>
+     <item
+         app:actionLayout="@layout/widget_checkdisabled"
+         tools:ignore="MenuTitle"
+         android:icon="@drawable/ic_disabled"/>
+     <item
+         app:actionLayout="@layout/widget_checkelectric"
+         tools:ignore="MenuTitle"
+         android:icon="@drawable/ic_ev"/>
+
+    <!--<item android:id="@+id/shaded"
         android:icon="@drawable/ic_shaded"
         android:title="Shaded Parking" />
 
@@ -29,7 +57,7 @@
 
     <item android:id="@+id/ev"
         android:icon="@drawable/ic_ev"
-        android:title="Electric Vehicles" />
+        android:title="Electric Vehicles" />-->
          </menu>
      </item>
 
@@ -62,4 +90,5 @@
         android:title="Sign Out"/>
 </menu>
     </item>
+
 </menu>

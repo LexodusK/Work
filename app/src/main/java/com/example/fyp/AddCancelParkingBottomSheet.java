@@ -26,6 +26,7 @@ import static android.support.constraint.Constraints.TAG;
 public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
     //set main activity as the listener
     private BottomSheetListener mListener;
+    private MarkerLocation mMarkerRemove;
     //    private TextInputLayout textInputTitle;
 //    private TextInputLayout textInputDescription;
 
@@ -40,6 +41,8 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
 //        textInputDescription = v.findViewById(R.id.Description);
         RelativeLayout mAddParking = v.findViewById(R.id.bottom_sheet_add_parking);
         RelativeLayout mCancelParking = v.findViewById(R.id.bottom_sheet_cancel);
+
+        mMarkerRemove = (MarkerLocation) getArguments().getSerializable("marker");
 
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
 
@@ -63,7 +66,9 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
             public void onClick(View view) {
 
                 mListener.onDismiss(true);
+                mMarkerRemove.getMarker().remove();
                 dismiss();
+
 
 
 //                Toast.makeText(getActivity(), "222222", Toast.LENGTH_SHORT).show();
@@ -78,6 +83,7 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
     public void onDismiss(DialogInterface dialog) {
 //        super.onDismiss(dialog);
         mListener.onDismiss(true);
+        mMarkerRemove.getMarker().remove();
 
     }
 

@@ -46,6 +46,7 @@ import android.widget.Toast;
 import com.example.fyp.models.FloatingMarkerTitlesOverlay;
 import com.example.fyp.models.PlaceInfo;
 import com.example.fyp.ParkingDetails;
+import com.example.fyp.R.layout.*;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -93,6 +94,8 @@ import java.util.List;
 import java.util.Map;
 
 
+import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
+import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 
 import static java.security.AccessController.getContext;
 
@@ -100,7 +103,7 @@ import static java.security.AccessController.getContext;
     public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
             AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
-            parkinginfo_with_edit_delete.BottomSheetListener //, AddParkingInfo.OnDataPass
+            parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener //, AddParkingInfo.OnDataPass
     {
 
         @Override
@@ -108,7 +111,7 @@ import static java.security.AccessController.getContext;
 
         }
 
-        @Override
+                @Override
         public void onMapReady(GoogleMap googleMap) {
             Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onMapReady: Map is ready");
@@ -208,11 +211,9 @@ import static java.security.AccessController.getContext;
                 //encompass the entire world
                 new LatLng(-40,-168), new LatLng(71,136));
 
-
-
         //widgets
         private AutoCompleteTextView mSearchText;
-        private ImageView mRecenter, mInfo, mPlacePicker;
+        private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker;
 
         //vars
         private boolean mLocationPermissionGranted = false;
@@ -233,10 +234,16 @@ import static java.security.AccessController.getContext;
         private TextInputLayout textInputTitle;
         private TextInputLayout textInputDescription;
         private TextView mTextView;
-        private TextView mtesttext;
+//        private TextView mtesttext;
         private String mtesttextemailstring;
-        private TextView emaildisplay;
+        private TextView emaildisp;
+        //        private TextView emaildisplay;
         private ArrayList mMarkersList;
+        private ArrayList mSearchableMarkers;
+
+
+        SpinnerDialog spinnerDialog;
+
 
 
 
@@ -251,10 +258,43 @@ import static java.security.AccessController.getContext;
             mDb = FirebaseFirestore.getInstance();
             textInputTitle = findViewById(R.id.Title);
             textInputDescription = findViewById(R.id.Description);
-//            emaildisplay = (TextView) findViewById(R.id.varying_email);
+            mSatelliteView = (ImageView) findViewById(R.id.ic_terrain);
+            mSortMarker = (ImageView)findViewById(R.id.ic_sortmarker);
+//            emaildisplay = findViewById(R.id.varying_email);
+//            emaildisplay = findViewById(R.layout.nav_header);
+            NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+            View headerView = navView.getHeaderView(0);
+
+                emaildisp  = (TextView) headerView.findViewById(R.id.varying_email);
 //            mtesttext = findViewById(R.id.testtext);
 //            mTextView = (TextView) findViewById(R.id.ic_someText);
             mMarkersList = new ArrayList();
+            mSearchableMarkers = new ArrayList();
+
+            spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
+            spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
+                @Override
+                public void onClick(String item, int position) {
+//                    moveCamera();
+                    ParkingDetails p = new ParkingDetails();
+                    Toast.makeText(MainActivity.this, "Selected " + item , Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onClick: " + position);
+                    Log.d(TAG, "onClick: " + mMarkersList.get(position));
+                    p = (ParkingDetails) mMarkersList.get(position);
+
+
+
+                    moveCamera(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM);
+                }
+            });
+
+            if (FirebaseAuth.getInstance().getUid()==null) {
+                final String text = "Help to improve the service by contributing by signing up!";
+                emaildisp.setText(text);
+            }
+
+
+
 
 
             //getLocationPermission();
@@ -287,6 +327,8 @@ import static java.security.AccessController.getContext;
             Log.d(TAG, "onCreate: synced");
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+
+
 //            Button buttonOpenParkingInfo = findViewById(R.id.bottom_drawer);
 //            buttonOpenParkingInfo.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -299,6 +341,8 @@ import static java.security.AccessController.getContext;
 
 
         }
+
+
 /*
 
         private boolean validateTitle(){
@@ -370,6 +414,9 @@ import static java.security.AccessController.getContext;
                 DocumentReference userRef = mDb.collection(getString(R.string.collection_users))
                         .document(FirebaseAuth.getInstance().getUid()); //collection in firebase
 
+
+//                final String text = "ss";
+
                 userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -379,11 +426,17 @@ import static java.security.AccessController.getContext;
                              mUserLocation.setUser(user);
                              ((UserClient)getApplicationContext()).setUser(user);
 
-//                             DocumentSnapshot documentSnapshot = task.getResult();
-//                             Log.d(TAG, "onComplete: " + documentSnapshot.getString("email") );
-//                             mtesttextemailstring = documentSnapshot.getString("email");
-//                             Log.d(TAG, "onComplete: " + mtesttextemailstring);
-//                             emaildisplay.setText(mtesttextemailstring);
+                             DocumentSnapshot documentSnapshot = task.getResult();
+                             Log.d(TAG, "onComplete: " + documentSnapshot.getString("email") );
+                             mtesttextemailstring = documentSnapshot.getString("email");
+                             Log.d(TAG, "onComplete: " + mtesttextemailstring);
+//                             mtesttext.setText(mtesttextemailstring);
+                             if (FirebaseAuth.getInstance().getUid()!=null)
+                                 emaildisp.setText(mtesttextemailstring);
+
+
+
+//                             mtesttext.setText("ASDASDADSd");
 
 
                              getDeviceLocation();
@@ -467,6 +520,8 @@ import static java.security.AccessController.getContext;
             Intent intent = new Intent(this, Login.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+
+
         }
 
 
@@ -581,12 +636,7 @@ import static java.security.AccessController.getContext;
         //initialize
         private void init(){
             Log.d(TAG, "init: initializing");
-
-
-
-
             // auto text completion
-
             mGoogleApiClient = new GoogleApiClient
                     .Builder(this)
                     .addApi(Places.GEO_DATA_API)
@@ -633,6 +683,25 @@ import static java.security.AccessController.getContext;
                 }
             });
 
+            mSatelliteView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL){
+                        mMap.setMapType(mMap.MAP_TYPE_HYBRID);
+                    }
+                   else if(mMap.getMapType() == GoogleMap.MAP_TYPE_HYBRID){
+                        mMap.setMapType(mMap.MAP_TYPE_NORMAL);
+                    }
+                }
+            });
+
+            mSortMarker.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    spinnerDialog.showSpinerDialog();
+                }
+            });
+
             //clicked on extra info to prompt the additional info
             mInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -668,6 +737,8 @@ import static java.security.AccessController.getContext;
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 Bundle bundle = new Bundle();
+
+
                 @Override
 
                 public boolean onMarkerClick(Marker marker) {
@@ -697,7 +768,7 @@ import static java.security.AccessController.getContext;
                             }
                         }
                         }catch (NullPointerException e){
-                            e.printStackTrace();
+                            Log.d(TAG, "onMarkerClick: " + e.getMessage());
                         }
 
 
@@ -709,12 +780,15 @@ import static java.security.AccessController.getContext;
 //                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
 //                    }
 
-                    parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
-                    bottomSheet.setArguments(bundle);
-                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
-
-
-
+                    if (FirebaseAuth.getInstance().getUid().equals(pDet.getUser_id())){
+                        parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
+                        bottomSheet.setArguments(bundle);
+                        bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+                    }else{
+                        parkinginfo_without_editdelete bottomSheet = new parkinginfo_without_editdelete();
+                        bottomSheet.setArguments(bundle);
+                        bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+                    }
 
 //                    Toast.makeText(MainActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
 //                    Snackbar.make(findViewById(android.R.id.content), "clickity click", Snackbar.LENGTH_LONG).show();
@@ -724,8 +798,42 @@ import static java.security.AccessController.getContext;
                 }
             });
 
+            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng point) {
 
-                mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                if (FirebaseAuth.getInstance().getUid()!=null) {
+                    moveCamera(new LatLng(point.latitude, point.longitude), DEFAULT_ZOOM );
+//
+                    onmaplongclickedpoint = new GeoPoint(point.latitude, point.longitude);
+//
+//
+                    IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                    Marker tMarker = mMap.addMarker(new MarkerOptions().position(point));
+                    tMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
+//
+                    MarkerLocation mLoc = new MarkerLocation();
+                    mLoc.setMarker(tMarker);
+                    Bundle markerRemove = new Bundle();
+                    markerRemove.putSerializable("marker", mLoc);
+//
+                    AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
+                    bottomSheet.setArguments(markerRemove);
+                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+//
+                     mMarkersList.add(point);
+                }
+                //only users who login can add a marker
+                else{
+                    Toast.makeText(MainActivity.this, "Login to add", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, Login.class);
+                    startActivity(intent);
+                }
+                }
+            });
+
+
+              /*  mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                     @Override
                     public void  onMapLongClick(LatLng point) {
 
@@ -741,13 +849,13 @@ import static java.security.AccessController.getContext;
 
 
 
-                          /*  if(!mMarkersList.isEmpty()){
+                         *//*   if(!mMarkersList.isEmpty()){
                                 for ( int mMarkerIndex = 0; mMarkerIndex < mMarkersList.size() ; mMarkerIndex++){
                                     if(mMarkersList.get(mMarkerIndex)==null){
                                         mMarkersList.add();
                                     }
                                 }
-                            }*/
+                            }*//*
                             // array list to store the markers;
                             // need a way to remove the selected marker, while retaining other markers
                             // add the marker to the list when user click add parking -> filled in details -> save details
@@ -762,19 +870,19 @@ import static java.security.AccessController.getContext;
                             IconGenerator iconFactory = new IconGenerator(MainActivity.this);
                             Marker tMarker = mMap.addMarker(new MarkerOptions().position(point));
                             tMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
-                            MarkerOptions option = new MarkerOptions().position(point);
-//                            mMap.addMarker(option);
 
-                            mMarkersList.add(tMarker);
+                            MarkerLocation mLoc = new MarkerLocation();
+                            mLoc.setMarker(tMarker);
+                            Bundle markerRemove = new Bundle();
+                            markerRemove.putSerializable("marker", mLoc);
+
+
+//                            mMarkersList.add(tMarker);
                             Log.d(TAG, "onMapLongClick: Last array is " + mMarkersList.get(mMarkersList.size()-1));
                             //open the bottom sheet for the add parking or cancel window
                             AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
+                            bottomSheet.setArguments(markerRemove);
                             bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
-
-                            // Marker icon
-//                            if ()
-
-
 
                             Log.d(TAG, "onMapLongClick: " + tMarker.getId());
 
@@ -785,7 +893,7 @@ import static java.security.AccessController.getContext;
 //                            }
 
         //<-------------------- if (user clicked add) ------------------------->
-//                            mMarkersList.add(point);
+                            mMarkersList.add(point);
 
 
 //                            Toast.makeText(MainActivity.this, textInputTitle.getEditText().getText().toString(), Toast.LENGTH_SHORT).show();
@@ -797,8 +905,7 @@ import static java.security.AccessController.getContext;
                             startActivity(intent);
                         }
                     }
-                });
-
+                });*/
 
 
 
@@ -944,6 +1051,12 @@ import static java.security.AccessController.getContext;
 
             HideSoftKeyboard();
         }
+
+        private void moveCamera (LatLng latlng, float zoom){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
+        }
+
+
 
         private void initMap (){
             Log.d(TAG, "initMap: initializing map ");
@@ -1171,6 +1284,7 @@ import static java.security.AccessController.getContext;
 
 
 
+
                 Log.d(TAG, "onButtonClicked: collection "+locationRef.get());
 
 //                DocumentReference docRef = locationRef.document(locationRef.document().getId());
@@ -1230,6 +1344,8 @@ import static java.security.AccessController.getContext;
 
         public void updateMapWithDatabaseMarker(){
             mMarkersList.clear();
+            mSearchableMarkers.clear();
+
             CollectionReference locationRef = mDb.collection(getString(R.string.collection_users));; //doc = IDed by id    //outer loop thru Users > ID
                 final CollectionReference innerLocationRef = mDb.collection(getString(R.string.collection_users));        //inner loop Users > ID > Parking Details > ID
                 locationRef.get()
@@ -1237,7 +1353,7 @@ import static java.security.AccessController.getContext;
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {   //outer loop thru Users > ID
 //                                        ParkingDetails padet = task.getResult().toObject(ParkingDetails.class);
                                         innerLocationRef.document(document.getId())
                                                 .collection(getString(R.string.collection_parking_details)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1245,28 +1361,46 @@ import static java.security.AccessController.getContext;
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                                                 if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot innerDocument : task.getResult()) {
+
+                                                    for (QueryDocumentSnapshot innerDocument : task.getResult()) {  //inner loop Users > ID > Parking Details > ID
                                                         Log.d(TAG, innerDocument.getId() + " idd => " + innerDocument.toObject(ParkingDetails.class));
                                                         ParkingDetails padet = innerDocument.toObject(ParkingDetails.class);
                                                         mMarkersList.add(padet);
+                                                        IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                                                        LatLng currentUser = new LatLng(padet.getGeo_point().getLatitude(), padet.getGeo_point().getLongitude());
+                                                        Log.d(TAG, "onMapReady: putted marker" + padet.getGeo_point() + "size" + mMarkersList.size());
+                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(padet.getTitle())));
+
+                                                        mSearchableMarkers.add(padet.getTitle());
+
+
                                                     }
+                                                    Log.d(TAG, "onComplete: aaaa" + mSearchableMarkers.size());
                                                     Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
                                                     Log.d(TAG, "on click: Array size is now " + mMarkersList.size() + "\n");
-                                                    IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                                                    ParkingDetails pDet = new ParkingDetails();
-                                                    for (int i = 0;i<mMarkersList.size();i++){
+
+                                                    // should be not the right way, adding exponentially more markers
+                                                  /*  for (int i = 0;i<mMarkersList.size();i++){
                                                         pDet = (ParkingDetails) mMarkersList.get(i);
                                                         LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
                                                         Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
                                                         mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
-                                                    }
+
+                                                            mSearchableMarkers.add(pDet.getTitle());
 
 
+                                                    }*/
+
+
+
                                                     }
+
                                             }
                                         });
 
                                     }
+
+
 
 
                                 } else {
@@ -1287,6 +1421,13 @@ import static java.security.AccessController.getContext;
                 mMarkersList.remove(mMarkersList.size() - 1);
                 Log.d(TAG, "onDismiss: clik");
             }
+        }
+
+
+        @Override
+        public void onDelete() {
+            mMap.clear();
+            updateMapWithDatabaseMarker();
         }
     }
 

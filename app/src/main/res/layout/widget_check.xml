@@ -1,0 +1,65 @@
+<!--
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+-->
+
+<CheckBox
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="  Shaded parking                    "
+    android:checked="true"
+    android:id="@+id/shadedcheck"
+    android:layout_gravity="left"/>
+
+<!--
+<CheckBox
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="  Free parking"
+android:checked="true"
+android:id="@+id/freecheck"
+android:layout_below="@+id/shadedcheck"/>
+
+    <CheckBox
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  Paid parking"
+        android:checked="true"
+        android:id="@+id/paidcheck"
+        android:layout_below="@+id/freecheck"/>
+
+    <CheckBox
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  Multistorey parking"
+        android:checked="true"
+        android:id="@+id/multistoreycheck"
+        android:layout_below="@+id/paidcheck"/>
+
+    <CheckBox
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  Disabled parking"
+        android:checked="true"
+        android:id="@+id/disabledcheck"
+        android:layout_below="@+id/multistoreycheck"/>
+
+    <CheckBox
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="  Electric vehicle parking"
+        android:checked="true"
+        android:id="@+id/evcheck"
+        android:layout_below="@+id/disabledcheck"/>
+
+
+
+</RelativeLayout>-->

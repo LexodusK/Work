@@ -5,12 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
-    android:fitsSystemWindows="true">
-
-<!--
+    android:fitsSystemWindows="true"
     tools:openDrawer="start">
       uncomment to show the sliding drawer
--->
+
 
 
     <RelativeLayout
@@ -41,18 +39,28 @@
                 android:text="THIS IS THE STRING"
                 android:id="@+id/ic_someText"/>-->
 
+  <!--          <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:id="@+id/ic_magnify"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/input_search"
+            android:src="@drawable/ic_magnify"/>-->
+
             <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:id="@+id/ic_magnify"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:id="@+id/ic_sortmarker"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="5dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="350dp"
                 android:src="@drawable/ic_magnify"/>
 
             <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"
                 android:layout_centerVertical="true"
                 android:textSize="15sp"
                 android:textColor="#000"
@@ -75,6 +83,18 @@
             android:scaleType="centerCrop"
             android:id="@+id/ic_recenter"
             android:src="@drawable/ic_recenter" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/ic_recenter"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/ic_terrain"
+            android:src="@drawable/ic_satellite"
+            />
 
         <ImageView
             android:layout_width="40dp"
@@ -136,13 +156,12 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"/>
 
-<!--
-    <TextView
+  <!--  <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="30sp"
-        android:id="@+id/testtext"/>
+        android:id="@+id/testtext"
+        />
 -->
-
 </android.support.v4.widget.DrawerLayout>

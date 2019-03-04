@@ -136,6 +136,11 @@ public class Register extends AppCompatActivity implements
         }
     }
 
+    public void onBackPressed(){
+        Intent intent = new Intent( Register.this, MainActivity.class);
+        startActivity(intent);
+    }
+
     private void hideSoftKeyboard(){
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/parkinglottitlelayoutwo">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:textSize="19sp"
+            android:id="@+id/varying_parkinglottitlewo"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglottitlelayoutwo"
+        android:id="@+id/parkinglottypelayoutwo"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="Parking Lot Type :"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/parkinglottypetextwo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/parkinglottypetextwo"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/varying_parkinglottypewo"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglottypelayoutwo"
+        android:id="@+id/parkinglotspaceslayoutwo"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="Parking Spaces :"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/parkinglotspacestextwo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/parkinglotspacestextwo"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/varying_parkinglotspaceswo"/>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglotspaceslayoutwo"
+        android:id="@+id/parkinglotinfolayoutwo"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="Additional Information :"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/parkinglotinfotextwo"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/parkinglotinfolayoutwo"
+        android:id="@+id/parkinglotinfotextlayoutwo">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:id="@+id/varying_parkinglotinfowo"/>
+
+    </RelativeLayout>
+
+
+
+
+
+</RelativeLayout>

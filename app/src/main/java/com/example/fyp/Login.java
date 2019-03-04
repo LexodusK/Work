@@ -3,6 +3,7 @@ package com.example.fyp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -90,6 +91,8 @@ public class Login extends AppCompatActivity implements
                 if (user != null) {
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     Toast.makeText(Login.this, "Authenticated with: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+//                    String input = "Authenticated with: " + user.getEmail();
+//                    Snackbar.make(findViewById(android.R.id.content), input, Snackbar.LENGTH_LONG).show();
 
 //                    FirebaseFirestore db = FirebaseFirestore.getInstance();
 //                    FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
