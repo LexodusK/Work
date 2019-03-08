@@ -53,7 +53,7 @@ public class AddParkingInfo extends BottomSheetDialogFragment implements Adapter
 
 
         Button mConfirmParkingAdd = v.findViewById(R.id.button_confirmAddParkingLot);
-        Button mCancelParkingAdd = v.findViewById(R.id.button_cancelAddParkingLot);
+        ImageView mCancelParkingAdd = v.findViewById(R.id.button_cancelAddParkingLot);
 //        Fragment fragment = v.findViewById(R.id.addParkingDetailsForm);
 
 

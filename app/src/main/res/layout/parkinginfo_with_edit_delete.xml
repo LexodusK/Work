@@ -104,25 +104,31 @@
         android:layout_marginTop="15dp">
 
         <Button
-            android:layout_width="120dp"
+            android:layout_width="200dp"
             android:layout_height="32dp"
-            android:layout_marginLeft="30dp"
             android:text="Edit"
             android:id="@+id/button_editparkinglotinfo"
             android:layout_marginStart="50dp"
             android:gravity="center"
             android:background="#00A86B"/>
 
-        <Button
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_delete"
+            android:layout_toEndOf="@+id/button_editparkinglotinfo"
+            android:id="@+id/button_deleteparkinglotinfo"
+            android:layout_marginStart="20dp"/>
+
+       <!-- <Button
             android:layout_width="120dp"
             android:layout_height="32dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginStart="40dp"
+            android:layout_marginEnd="50dp"
             android:text="Delete"
             android:id="@+id/button_deleteparkinglotinfo"
-            android:layout_toRightOf="@+id/button_editparkinglotinfo"
+            android:layout_toEndOf="@+id/button_editparkinglotinfo"
             android:gravity="center"
-            android:background="#FF0000"/>
+            android:background="#FF0000"/>-->
 
 
     </RelativeLayout>

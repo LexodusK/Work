@@ -70,12 +70,12 @@
 
 </string-array>
 
-    <string name="Shaded">&#x0020;&#32;Shaded Parking</string>
-    <string name="Free">&#x0020;Free Parking </string>
-    <string name="Paid">&#x0020;Paid Parking </string>
-    <string name="Multistorey">&#x0020;Multistorey Parking </string>
-    <string name="Disabled">&#x0020;Disabled Parking </string>
-    <string name="Electric">&#x0020;Electric Parking </string>
+    <string name="Shaded">Shaded Parking</string>
+    <string name="Free">Free Parking </string>
+    <string name="Paid">Paid Parking </string>
+    <string name="Multistorey">Multistorey Parking </string>
+    <string name="Disabled">Disabled Parking </string>
+    <string name="Electric">Electric Parking </string>
 
     <string-array name="title">
         <item>Shaded Parking</item>

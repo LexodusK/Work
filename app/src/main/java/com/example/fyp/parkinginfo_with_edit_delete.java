@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -61,7 +62,7 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment  {
         //inflate the layout for the fragment
         View v = inflater.inflate(R.layout.parkinginfo_with_edit_delete, container, false);
         Button mEditParking = v.findViewById(R.id.button_editparkinglotinfo);
-        Button mDeleteParking = v.findViewById(R.id.button_deleteparkinglotinfo);
+        ImageView mDeleteParking = v.findViewById(R.id.button_deleteparkinglotinfo);
         TextView mTexttitle = v.findViewById(R.id.varying_parkinglottitle);
         TextView mTextDescription = v.findViewById(R.id.varying_parkinglotinfo);
         TextView mTextPSpaces = v.findViewById(R.id.varying_parkinglotspaces);

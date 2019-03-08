@@ -6,7 +6,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -22,6 +24,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -29,6 +32,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,8 +42,10 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -136,64 +142,7 @@ import static java.security.AccessController.getContext;
 
                 init();
 
-
-
-                    // refer to location of database (in this case users then get ID of user and put a collection named "parking details"
-                /*CollectionReference locationRef = mDb.collection(getString(R.string.collection_users));; //doc = IDed by id    //outer loop thru Users > ID
-                final CollectionReference innerLocationRef = mDb.collection(getString(R.string.collection_users));        //inner loop Users > ID > Parking Details > ID
-                locationRef.get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                                        ParkingDetails padet = task.getResult().toObject(ParkingDetails.class);
-                                        innerLocationRef.document(document.getId())
-                                                .collection(getString(R.string.collection_parking_details)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot innerDocument : task.getResult()) {
-                                                        Log.d(TAG, innerDocument.getId() + " idd => " + innerDocument.toObject(ParkingDetails.class));
-                                                        ParkingDetails padet = innerDocument.toObject(ParkingDetails.class);
-                                                        mMarkersList.add(padet);
-                                                    }
-                                                    Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
-                                                    IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                                                    for (int i = 0;i<mMarkersList.size();i++){
-                                                        ParkingDetails pDet = (ParkingDetails) mMarkersList.get(i);
-                                                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
-                                                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
-                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
-                                                    }
-
-                                                    }
-                                            }
-                                        });
-
-                                    }
-
-
-                                } else {
-                                    Log.d(TAG, "Error getting documents: ", task.getException());
-                                }
-                            }
-                        });*/
-
-
-
-
-
             }
-
-
-//                IconGenerator iconFactory = new IconGenerator(this);
-//                Marker marker1 = googleMap.addMarker(new MarkerOptions().position(new LatLng(37.4207700,-122.084)));
-//                marker1.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker 1")));
-//                Marker marker2 = googleMap.addMarker(new MarkerOptions().position(new LatLng(37.4309165,-122.084)));
-//                marker2.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker 2")));
-
 
 
         }
@@ -244,10 +193,20 @@ import static java.security.AccessController.getContext;
         private ArrayList mSearchableMarkers;
         private CheckBox mShaded;
 
-
         SpinnerDialog spinnerDialog;
 
-
+//        String[] menutitles;
+//        TypedArray menuIcons;
+//
+//        // nav drawer title
+//        private CharSequence mDrawerTitle;
+//        private CharSequence mTitle;
+//        private DrawerLayout mDrawerLayout;
+//        private ListView mDrawerList;
+//        private ActionBarDrawerToggle mDrawerToggle;
+//        private List<RowItem> rowItems;
+//        private CustomAdapter adapter;
+//
 
 
         @Override
@@ -263,16 +222,12 @@ import static java.security.AccessController.getContext;
             textInputDescription = findViewById(R.id.Description);
             mSatelliteView = (ImageView) findViewById(R.id.ic_terrain);
             mSortMarker = (ImageView)findViewById(R.id.ic_sortmarker);
-//            emaildisplay = findViewById(R.id.varying_email);
-//            emaildisplay = findViewById(R.layout.nav_header);
             NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
             View headerView = navView.getHeaderView(0);
-
-                emaildisp  = (TextView) headerView.findViewById(R.id.varying_email);
-//            mtesttext = findViewById(R.id.testtext);
-//            mTextView = (TextView) findViewById(R.id.ic_someText);
+            emaildisp  = (TextView) headerView.findViewById(R.id.varying_email);
             mMarkersList = new ArrayList();
             mSearchableMarkers = new ArrayList();
+            View checkbox = (View) navView.getMenu();
             mShaded = findViewById(R.id.shadedcheck);
 
             spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
@@ -285,8 +240,6 @@ import static java.security.AccessController.getContext;
                     Log.d(TAG, "onClick: " + position);
                     Log.d(TAG, "onClick: " + mMarkersList.get(position));
                     p = (ParkingDetails) mMarkersList.get(position);
-
-
 
                     moveCamera(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM);
                 }
@@ -319,6 +272,83 @@ import static java.security.AccessController.getContext;
             //take care of rotating hamburger menu
             toggle.syncState();
 
+//            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+            MenuItem checkboxSP = navView.getMenu().findItem(R.id.shadedcheck);
+            MenuItem checkboxFP = navView.getMenu().findItem(R.id.freecheck);
+            MenuItem checkboxPP = navView.getMenu().findItem(R.id.paidcheck);
+            MenuItem checkboxMSP = navView.getMenu().findItem(R.id.multistoreycheck);
+            MenuItem checkboxDP = navView.getMenu().findItem(R.id.disabledcheck);
+            MenuItem checkboxEVP = navView.getMenu().findItem(R.id.electriccheck);
+
+            CompoundButton checkboxSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxSP);
+            checkboxSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Toast.makeText(MainActivity.this, "Filtered Shaded Areas", Toast.LENGTH_SHORT).show();
+                    ParkingDetails p = new ParkingDetails();
+
+                }
+            });
+
+            CompoundButton checkboxFPView = (CompoundButton) MenuItemCompat.getActionView(checkboxFP);
+            checkboxFPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Toast.makeText(MainActivity.this, "pls2", Toast.LENGTH_SHORT).show();
+                    ParkingDetails p = new ParkingDetails();
+
+                }
+            });
+
+            CompoundButton checkboxPPView = (CompoundButton) MenuItemCompat.getActionView(checkboxPP);
+            checkboxPPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Toast.makeText(MainActivity.this, "pls5", Toast.LENGTH_SHORT).show();
+                    ParkingDetails p = new ParkingDetails();
+
+                }
+            });
+
+            CompoundButton checkboxMSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxMSP);
+            checkboxMSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Toast.makeText(MainActivity.this, "pls7", Toast.LENGTH_SHORT).show();
+                    ParkingDetails p = new ParkingDetails();
+
+                }
+            });
+
+            CompoundButton checkboxDPView = (CompoundButton) MenuItemCompat.getActionView(checkboxDP);
+            checkboxDPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Toast.makeText(MainActivity.this, "plsasd", Toast.LENGTH_SHORT).show();
+                    ParkingDetails p = new ParkingDetails();
+
+                }
+            });
+
+            CompoundButton checkboxEVPView = (CompoundButton) MenuItemCompat.getActionView(checkboxEVP);
+            checkboxEVPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    Toast.makeText(MainActivity.this, "pls", Toast.LENGTH_SHORT).show();
+                    ParkingDetails p = new ParkingDetails();
+
+                }
+            });
+
+
+
+
+//            rowItems = new ArrayList<RowItem>();
+//            mShaded.setChecked(true);
+
+
+
+
 
 
 
@@ -327,6 +357,26 @@ import static java.security.AccessController.getContext;
 
         //end onCreate
         }
+
+       /* public boolean onCreateOptionsMenu (Menu menu){
+            getMenuInflater().inflate(R.menu.drawer_menu, menu);
+            SharedPreferences settings = getSharedPreferences("settings", 0);
+            boolean isChecked = settings.getBoolean("checkbox", false);
+            MenuItem item = menu.findItem(R.id.shadedcheck);
+            item.setChecked(isChecked);
+            return true;
+        }
+
+        public boolean onOptionsItemSelected (MenuItem item){
+            int id = item.getItemId();
+            if(id == R.id.shadedcheck){
+                if(item.isChecked()){
+                    ParkingDetails p = new ParkingDetails();
+                    Toast.makeText(this, "what is ths", Toast.LENGTH_SHORT).show();
+                }
+            }
+            return super.onOptionsItemSelected(item);
+        }*/
 
 
         private void getUserDetails (){
@@ -757,100 +807,8 @@ import static java.security.AccessController.getContext;
                 }
             });
 
-
-              /*  mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                    @Override
-                    public void  onMapLongClick(LatLng point) {
-
-
-
-                        if (FirebaseAuth.getInstance().getUid()!=null) {
-                            Log.d(TAG, "onMapLongClick: Logged in as " + FirebaseAuth.getInstance().getUid());
-//                            mMap.clear();
-                            moveCamera(new LatLng(point.latitude, point.longitude), DEFAULT_ZOOM, "" );
-
-                            onmaplongclickedpoint = new GeoPoint(point.latitude, point.longitude);
-//                            mParkingDetails.setGeo_point(onmaplongclickedpoint);
-
-
-
-                         *//*   if(!mMarkersList.isEmpty()){
-                                for ( int mMarkerIndex = 0; mMarkerIndex < mMarkersList.size() ; mMarkerIndex++){
-                                    if(mMarkersList.get(mMarkerIndex)==null){
-                                        mMarkersList.add();
-                                    }
-                                }
-                            }*//*
-                            // array list to store the markers;
-                            // need a way to remove the selected marker, while retaining other markers
-                            // add the marker to the list when user click add parking -> filled in details -> save details
-
-
-
-                            Log.d(TAG, "onMapLongClick: Array is now " + mMarkersList.toString() + "\n");
-                            Log.d(TAG, "onMapLongClick: lat is " + Double.toString(point.latitude) +
-                                                            " long is " + Double.toString(point.longitude));
-
-
-                            IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                            Marker tMarker = mMap.addMarker(new MarkerOptions().position(point));
-                            tMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
-
-                            MarkerLocation mLoc = new MarkerLocation();
-                            mLoc.setMarker(tMarker);
-                            Bundle markerRemove = new Bundle();
-                            markerRemove.putSerializable("marker", mLoc);
-
-
-//                            mMarkersList.add(tMarker);
-                            Log.d(TAG, "onMapLongClick: Last array is " + mMarkersList.get(mMarkersList.size()-1));
-                            //open the bottom sheet for the add parking or cancel window
-                            AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
-                            bottomSheet.setArguments(markerRemove);
-                            bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
-
-                            Log.d(TAG, "onMapLongClick: " + tMarker.getId());
-
-
-                            // else {
-//                            mMap.clear();
-//                            updateMapWithDatabaseMarker();
-//                            }
-
-        //<-------------------- if (user clicked add) ------------------------->
-                            mMarkersList.add(point);
-
-
-//                            Toast.makeText(MainActivity.this, textInputTitle.getEditText().getText().toString(), Toast.LENGTH_SHORT).show();
-                        }
-                            //only users who login can add a marker
-                          else{
-                            Toast.makeText(MainActivity.this, "Login to add", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(MainActivity.this, Login.class);
-                            startActivity(intent);
-                        }
-                    }
-                });*/
-
-
-
             HideSoftKeyboard();
         }
-
-
-        //clicked on map icon to reveal surrounding things
-   /* protected void onActivityResult (int requestCode, int resultCode, Intent data){
-        if (requestCode == PLACE_PICKER_REQUEST){
-            if (resultCode == RESULT_OK) {
-                //place object
-                Place place = PlacePicker.getPlace(this, data);
-                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                        .getPlaceById(mGoogleApiClient, place.getId());
-                //submit request                  //create actual callback
-                placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-            }
-        }
-    }*/
 
 
         // move to autocompleted search text location

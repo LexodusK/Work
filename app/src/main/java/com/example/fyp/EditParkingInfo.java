@@ -71,7 +71,7 @@ public class EditParkingInfo extends BottomSheetDialogFragment implements Adapte
         mParkingDetails = (ParkingDetails) getArguments().getSerializable("edit");
 
         Button mConfirmParkingEdit = v.findViewById(R.id.button_confirmEditParkingLot);
-        Button mCancelParkingAdd = v.findViewById(R.id.button_cancelEditParkingLot);
+        ImageView mCancelParkingAdd = v.findViewById(R.id.button_cancelEditParkingLot);
 
         textInputTitle.setText(mParkingDetails.getTitle());
         textInputDescription.setText(mParkingDetails.getDescription());

@@ -8,30 +8,44 @@
 
      <item android:title="Filter"
          android:icon="@drawable/ic_filter">
- <menu>
+
+ <menu android:id="@+id/checkboxmenu">
 
      <item
+         android:id="@+id/shadedcheck"
          app:actionLayout="@layout/widget_check"
+         android:title="@string/Shaded"
          tools:ignore="MenuTitle"
+         android:checkable="true"
          android:icon="@drawable/ic_shaded"/>
      <item
+         android:id="@+id/freecheck"
          app:actionLayout="@layout/widget_checkfree"
+         android:title="@string/Free"
          tools:ignore="MenuTitle"
          android:icon="@drawable/ic_findcar"/>
      <item
+         android:id="@+id/paidcheck"
          app:actionLayout="@layout/widget_checkpaid"
+         android:title="@string/Paid"
          tools:ignore="MenuTitle"
          android:icon="@drawable/ic_paidparking"/>
      <item
+         android:id="@+id/multistoreycheck"
          app:actionLayout="@layout/widget_checkmultistorey"
+         android:title="@string/Multistorey"
          tools:ignore="MenuTitle"
          android:icon="@drawable/ic_multistorey"/>
      <item
+         android:id="@+id/disabledcheck"
          app:actionLayout="@layout/widget_checkdisabled"
+         android:title="@string/Disabled"
          tools:ignore="MenuTitle"
          android:icon="@drawable/ic_disabled"/>
      <item
+         android:id="@+id/electriccheck"
          app:actionLayout="@layout/widget_checkelectric"
+         android:title="@string/Electric"
          tools:ignore="MenuTitle"
          android:icon="@drawable/ic_ev"/>
 
