@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -73,6 +74,9 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment  {
         mParkingDetails = (ParkingDetails) getArguments().getSerializable("key");
         mMarkerRemove = (MarkerLocation) getArguments().getSerializable("marker");
 
+        final Bundle bundle = new Bundle();
+        bundle.putSerializable("edit", mParkingDetails);
+
         //set the details into the bottomsheetlistener textview
         mTexttitle.setText(mParkingDetails.getTitle());
         mTextDescription.setText(mParkingDetails.getDescription());
@@ -92,6 +96,10 @@ public class parkinginfo_with_edit_delete extends BottomSheetDialogFragment  {
         mEditParking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                EditParkingInfo bottomSheet = new EditParkingInfo();
+                bottomSheet.setArguments(bundle);
+                bottomSheet.show(getFragmentManager(), "exampleBottomSheet");
 
 
                 dismiss();

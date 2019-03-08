@@ -2,6 +2,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:text="@string/Disabled"
+    android:checked="true"
+    android:id="@+id/disabledcheck"
+    android:layout_gravity="start"
+    android:layout_marginEnd="63dp"
+    />
+
+    <!--
+
+    <CheckBox
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:text="  Disabled parking                  "
     android:checked="true"
     android:id="@+id/disabledcheck"/>
+    -->

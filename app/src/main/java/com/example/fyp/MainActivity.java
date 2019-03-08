@@ -37,6 +37,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -103,7 +104,8 @@ import static java.security.AccessController.getContext;
     public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
             AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
-            parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener //, AddParkingInfo.OnDataPass
+            parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener,
+            EditParkingInfo.BottomSheetListener//, AddParkingInfo.OnDataPass
     {
 
         @Override
@@ -240,6 +242,7 @@ import static java.security.AccessController.getContext;
         //        private TextView emaildisplay;
         private ArrayList mMarkersList;
         private ArrayList mSearchableMarkers;
+        private CheckBox mShaded;
 
 
         SpinnerDialog spinnerDialog;
@@ -270,6 +273,7 @@ import static java.security.AccessController.getContext;
 //            mTextView = (TextView) findViewById(R.id.ic_someText);
             mMarkersList = new ArrayList();
             mSearchableMarkers = new ArrayList();
+            mShaded = findViewById(R.id.shadedcheck);
 
             spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
             spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
@@ -293,14 +297,8 @@ import static java.security.AccessController.getContext;
                 emaildisp.setText(text);
             }
 
-
-
-
-
             //getLocationPermission();
             initMap();
-
-
 
             /* -----------   Hamburger menu ----------------- */
 
@@ -310,8 +308,8 @@ import static java.security.AccessController.getContext;
 
             drawer = findViewById(R.id.drawer_layout);
 
-            NavigationView navigationView = findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
+//            NavigationView navigationView = findViewById(R.id.nav_view);
+            navView.setNavigationItemSelectedListener(this);
 
 
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -327,82 +325,11 @@ import static java.security.AccessController.getContext;
             Log.d(TAG, "onCreate: synced");
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-
-
-//            Button buttonOpenParkingInfo = findViewById(R.id.bottom_drawer);
-//            buttonOpenParkingInfo.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    AddParkingInfo bottomSheet = new AddParkingInfo();
-//                    bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
-//                }
-//            });
-
-
-
+        //end onCreate
         }
-
-
-/*
-
-        private boolean validateTitle(){
-            String TitleInput = textInputTitle.getEditText().getText().toString().trim();
-
-            if(TitleInput.isEmpty()){
-                textInputTitle.setError("Field can't be empty");
-                return false;
-            }else if(TitleInput.length()>25){
-                textInputTitle.setError("Title too long");
-                return false;
-            }
-            else{
-                textInputTitle.setError(null);
-                return true;
-            }
-
-        }
-
-        private boolean validateDescription(){
-            String DescriptionInput = textInputDescription.getEditText().getText().toString().trim();
-
-            if(DescriptionInput.isEmpty()){
-                textInputDescription.setError("Field can't be empty");
-                return false;
-            }else{
-                textInputDescription.setError(null);
-                return true;
-            }
-        }
-
-        //public because xml
-        public void confirmInput(View v){
-            //one vertical bar because both must be called; otherwise first will only be false
-            if(!validateDescription() | !validateTitle()){
-                return;
-            }
-
-            String input = "Title: " + textInputTitle.getEditText().getText().toString();
-            input += "\n";
-            input += "Description" + textInputDescription.getEditText().getText().toString();
-            Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "confirmInput: Saved input" + input);
-
-        }
-
-*/
 
 
         private void getUserDetails (){
-
-//            if (FirebaseAuth.getInstance().getUid() != null){
-//                emaildisplay.setText(FirebaseAuth.getInstance().getUid());
-//            }else{
-//            try{
-//                emaildisplay.setText("Please help to contribute!");
-//            }catch (NullPointerException e){
-//                Log.d(TAG, "getUserDetails: " + e.getMessage());
-//            }
-//            }
 
             //if (user == logged in) then save to database
             Log.d(TAG, "getUserDetails: ID is " + FirebaseAuth.getInstance().getUid());
@@ -413,7 +340,6 @@ import static java.security.AccessController.getContext;
                 mUserLocation = new UserLocation();
                 DocumentReference userRef = mDb.collection(getString(R.string.collection_users))
                         .document(FirebaseAuth.getInstance().getUid()); //collection in firebase
-
 
 //                final String text = "ss";
 
@@ -433,7 +359,6 @@ import static java.security.AccessController.getContext;
 //                             mtesttext.setText(mtesttextemailstring);
                              if (FirebaseAuth.getInstance().getUid()!=null)
                                  emaildisp.setText(mtesttextemailstring);
-
 
 
 //                             mtesttext.setText("ASDASDADSd");
@@ -1065,53 +990,6 @@ import static java.security.AccessController.getContext;
             mapFragment.getMapAsync(com.example.fyp.MainActivity.this);
         }
 
-    /*private void getLocationPermission(){
-        Log.d(TAG, "getLocationPermission: getting location permission");
-        //ask for permission to turn on GPS geolocation
-        String[] permissions= {Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                    COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                mLocationPermissionGranted = true;
-                //if permission granted, initialize map again
-                initMap();
-            }else{
-                ActivityCompat.requestPermissions(this,
-                        permissions,
-                        LOCATION_PERMISSION_REQUEST_CODE);
-            }
-        }else{
-            ActivityCompat.requestPermissions(this,
-                    permissions,
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }*/
-
-  /*  @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult: Called");
-        mLocationPermissionGranted = false;
-        switch (requestCode){
-            case LOCATION_PERMISSION_REQUEST_CODE:{
-                //some kind of permission was granted           if 1st permission was granted then good
-                if (grantResults.length > 0){
-                    for (int i=0; i < grantResults.length; i++){
-                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                            mLocationPermissionGranted = false;
-                            Log.d(TAG, "onRequestPermissionsResult: Permission failed");
-                            return;
-                        }
-                    }
-                    Log.d(TAG, "onRequestPermissionsResult: Permission granted");
-                    mLocationPermissionGranted = true;
-                    //initialize the map
-                    initMap();
-                }
-            }
-        }
-    }*/
 
         @Override
         protected void onResume(){
@@ -1190,6 +1068,8 @@ import static java.security.AccessController.getContext;
                     mPlace.setPhoneNumber(place.getPhoneNumber().toString());
                     mPlace.setWebsiteUri(place.getWebsiteUri());
 
+
+
                     Log.d(TAG, "onResult:  Place" + mPlace.toString());
                 }catch (NullPointerException e){
                     Log.e(TAG, "onResult: NullPointerException" + e.getMessage() );
@@ -1256,6 +1136,7 @@ import static java.security.AccessController.getContext;
 
 
         // Bottom sheet listener with parking details from there sent here to be stored in database
+        //add to database
         @Override
         public void onButtonClicked(String t, String d, String type, String spaces) {
             String input = "Marker title added as " + t;
@@ -1283,8 +1164,6 @@ import static java.security.AccessController.getContext;
                 mParkingDetails.setMarker_id(locationRef.document().getId());
 
 
-
-
                 Log.d(TAG, "onButtonClicked: collection "+locationRef.get());
 
 //                DocumentReference docRef = locationRef.document(locationRef.document().getId());
@@ -1303,38 +1182,40 @@ import static java.security.AccessController.getContext;
                 });
                 mMap.clear();
                 updateMapWithDatabaseMarker();
-                //to log the list all documents
-//                locationRef.get()
-//                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                                if (task.isSuccessful()) {
-//                                    for (QueryDocumentSnapshot document : task.getResult()) {
-////                                        ParkingDetails padet = task.getResult().toObject(ParkingDetails.class);
-//                                        Log.d(TAG, document.getId() + " idd => " + document.toObject(ParkingDetails.class));
-//                                        ParkingDetails padet = document.toObject(ParkingDetails.class);
-//
-//                                        mMarkersList.add(padet);
-//
-//                                    } Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
-//                                } else {
-//                                    Log.d(TAG, "Error getting documents: ", task.getException());
-//                                }
-//                            }
-//                        });
-//
-//                IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-//
-//                for (int i = 0;i<mMarkersList.size();i++){
-//                    ParkingDetails pDet = (ParkingDetails) mMarkersList.get(i);
-//                    LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
-//                    mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
-//                }
-
-
 
             }
 
+        }
+
+        //edit added marker
+        @Override
+        public void onButtonClickedEdit(String t, String d, String type, String spaces, String id, GeoPoint point) {
+            CollectionReference locationRef = mDb.collection(getString(R.string.collection_users)).document(FirebaseAuth.getInstance().getUid())
+                    .collection(getString(R.string.collection_parking_details));
+
+            mParkingDetails = new ParkingDetails();
+            mParkingDetails.setDescription(d);
+            mParkingDetails.setTitle(t);
+            mParkingDetails.setTypeofParking(type);
+            mParkingDetails.setNumberofParkingspots(spaces);
+            mParkingDetails.setUser_id(FirebaseAuth.getInstance().getUid());
+            mParkingDetails.setMarker_id(id);
+            mParkingDetails.setGeo_point(point);
+
+
+            DocumentReference docRef = locationRef.document(id);
+            docRef.set(mParkingDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "onComplete: " + mParkingDetails.getTitle()
+                                                       + mParkingDetails.getDescription());
+                    }
+                }
+            });
+
+            mMap.clear();
+            updateMapWithDatabaseMarker();
         }
 
         // save a particular marker's long lat with the type, title and description
@@ -1429,5 +1310,7 @@ import static java.security.AccessController.getContext;
             mMap.clear();
             updateMapWithDatabaseMarker();
         }
+
+
     }
 

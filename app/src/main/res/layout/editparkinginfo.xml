@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="top"
+    android:orientation="vertical"
+    android:padding="15dp"
+    tools:context="com.example.fyp.MainActivity"
+    android:id="@+id/addParkingDetailsFormEdit">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/topEdit"
+        android:layout_marginBottom="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000"
+            android:text="Select parking lot"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/iconsEdit"
+        android:layout_below="@+id/topEdit">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_findcar"
+            android:layout_marginTop="5dp"
+            android:id="@+id/icon1Edit"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_paidparking"
+            android:layout_below="@+id/icon1Edit"
+            android:id="@+id/icon2Edit"
+            android:layout_marginTop="7dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_multistorey"
+            android:layout_marginTop="8dp"
+            android:id="@+id/icon3Edit"
+            android:layout_below="@+id/icon2Edit"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_disabled"
+            android:layout_marginTop="8dp"
+            android:id="@+id/icon4Edit"
+            android:layout_below="@+id/icon3Edit"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_ev"
+            android:layout_marginTop="8dp"
+            android:id="@+id/icon5Edit"
+            android:layout_below="@+id/icon4Edit"/>
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relayout_topPtypeEdit"
+        android:layout_toRightOf="@id/iconsEdit"
+        android:layout_below="@+id/topEdit">
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ParkingLotTypeEdit">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_oneEdit"
+                android:text="Free Parking lot"
+                />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_twoEdit"
+                android:text="Paid Parking lot"
+                />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_threeEdit"
+                android:text="Multistorey Parking lot"
+                />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_fourEdit"
+                android:text="Disabled Parking"
+                />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radio_fiveEdit"
+                android:text="Electric vehicle lot"
+                />
+
+        </RadioGroup>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iconsEdit"
+        android:id="@+id/numparkspotsEdit"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number of parking spots"
+            android:id="@+id/numparkspotstextEdit"
+
+            android:textColor="#000"/>
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/numparkspotstextEdit"
+            android:id="@+id/ParkingLotSpacesEdit">
+
+        </Spinner>
+        <!--  <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:src="@drawable/ic_edit"
+              android:layout_marginLeft="0dp"
+              android:id="@+id/ParkingLotSpaces"
+              android:background="@drawable/background_border"
+              android:layout_toEndOf="@+id/spinner"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/ParkingLotSpacesEdit"
+            android:id="@+id/varying_numparkspotsEdit"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000"/>
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toptitleEdit"
+        android:layout_below="@+id/numparkspotsEdit">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:errorEnabled="true"
+            app:counterEnabled="true"
+            app:counterMaxLength="25">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Title"
+                android:textColor="#000"
+                android:singleLine="true"
+                android:textSize="15sp"
+                android:id="@+id/TitleEdit"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottomdescriptionEdit"
+        android:layout_below="@+id/toptitleEdit">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:errorEnabled="true">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:gravity="bottom"
+                android:singleLine="true"
+                android:textSize="15sp"
+                android:id="@+id/DescriptionEdit"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/bottomdescriptionEdit"
+        android:layout_marginTop="5dp">
+
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:id="@+id/button_confirmEditParkingLot"
+            android:layout_marginStart="25dp"/>
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/button_cancelEditParkingLot"
+            android:layout_toEndOf="@+id/button_confirmEditParkingLot"
+            android:layout_marginStart="25dp"/>
+
+    </RelativeLayout>
+</RelativeLayout>
+
+
+
+    <!--android:onClick="confirmInput"-->

@@ -5,10 +5,10 @@
     tools:showIn="navigation_view">
 
 
+
      <item android:title="Filter"
          android:icon="@drawable/ic_filter">
  <menu>
-
 
      <item
          app:actionLayout="@layout/widget_check"
@@ -35,9 +35,14 @@
          tools:ignore="MenuTitle"
          android:icon="@drawable/ic_ev"/>
 
-    <!--<item android:id="@+id/shaded"
+
+   <!-- <item android:id="@+id/shaded"
         android:icon="@drawable/ic_shaded"
-        android:title="Shaded Parking" />
+        android:title="Shaded Parking"
+        android:checkable="true"
+        android:visible="true"
+        app:showAsAction="never"
+        android:orderInCategory="200"/>
 
     <item android:id="@+id/free"
         android:icon="@drawable/ic_findcar"

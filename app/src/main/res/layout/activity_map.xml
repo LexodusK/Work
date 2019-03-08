@@ -7,7 +7,7 @@
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
-      uncomment to show the sliding drawer
+ <!--     uncomment to show the sliding drawer-->
 
 
 
@@ -88,8 +88,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@id/ic_recenter"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:scaleType="centerCrop"
             android:id="@+id/ic_terrain"
@@ -164,4 +164,5 @@
         android:id="@+id/testtext"
         />
 -->
+<!--    <include layout="@layout/drawerlayout"/>-->
 </android.support.v4.widget.DrawerLayout>

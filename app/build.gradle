@@ -41,9 +41,10 @@ dependencies {
     //Google locations
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-places:16.0.0'
-        implementation 'com.github.MdFarhanRaja:SearchableSpinner:2.0'
+//    implementation 'com.github.MdFarhanRaja:SearchableSpinner:2.0'
+    implementation project(':spinerdialog')
     //    implementation 'com.github.Lexodusk:spinner'
-//        implementation project(':spinerdialog')
+    //        implementation project(':spinerdialog')
 }
 apply plugin: 'com.google.gms.google-services'
 com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

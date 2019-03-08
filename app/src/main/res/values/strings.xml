@@ -55,15 +55,46 @@
     <string name="action_chatroom_user_list">User list</string>
     <string name="action_profile">Profile</string>
 
+    <string name="a1">1&#8211;3</string>
+    <string name="b2">4&#8211;10</string>
+    <string name="c3">11&#8211;50</string>
+    <string name="d4">51&#8211;100</string>
+    <string name="e5">100+</string>
+
     <string-array name="numbers">
-        <item> 1 &#8211; 3</item>
-        <item> 4 &#8211; 10</item>
-        <item> 11 &#8211; 50</item>
-        <item> 51 &#8211; 100</item>
-        <item> 100+ </item>
+        <item>@string/a1</item>
+        <item>@string/b2</item>
+        <item>@string/c3</item>
+        <item>@string/d4</item>
+        <item>@string/e5</item>
 
+</string-array>
 
+    <string name="Shaded">&#x0020;&#32;Shaded Parking</string>
+    <string name="Free">&#x0020;Free Parking </string>
+    <string name="Paid">&#x0020;Paid Parking </string>
+    <string name="Multistorey">&#x0020;Multistorey Parking </string>
+    <string name="Disabled">&#x0020;Disabled Parking </string>
+    <string name="Electric">&#x0020;Electric Parking </string>
+
+    <string-array name="title">
+        <item>Shaded Parking</item>
+        <item>Free Parking</item>
+        <item>Paid Parking</item>
+        <item>Multistorey Parking</item>
+        <item>Disabled Parking</item>
+        <item>Electric vehicle Parking</item>
     </string-array>
+
+    <array name="icons">
+        <item>@drawable/ic_shaded</item>
+        <item>@drawable/ic_findcar</item>
+        <item>@drawable/ic_paidparking</item>
+        <item>@drawable/ic_multistorey</item>
+        <item>@drawable/ic_disabled</item>
+        <item>@drawable/ic_ev</item>
+
+    </array>
 
 
 </resources>
