@@ -92,9 +92,13 @@ import com.google.firebase.firestore.GeoPoint;
 import com.example.fyp.AddParkingInfo;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.ui.IconGenerator;
 
+import org.json.JSONException;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -127,6 +131,7 @@ import static java.security.AccessController.getContext;
 
             mMap = googleMap;
             updateMapWithDatabaseMarker();
+            setUpClusterer();
             //if permission is granted, then proceed
             if (mLocationPermissionGranted) {
 //            initMap();
@@ -190,8 +195,18 @@ import static java.security.AccessController.getContext;
         private TextView emaildisp;
         //        private TextView emaildisplay;
         private ArrayList mMarkersList;
+        private ArrayList mFilteredList;
         private ArrayList mSearchableMarkers;
+        private ArrayList mFilterableMarkers;
         private CheckBox mShaded;
+        private ClusterManager<MarkerCluster> mClusterManager;
+        private String shadedGlobal = "Shaded Parking lot";
+        private String freeGlobal = "Free Parking lot";
+        private String paidGlobal = "Paid Parking lot";
+        private String mspGlobal = "Multistorey Parking lot";
+        private String disabledGlobal = "Disabled Parking";
+        private String evGlobal = "Electric vehicle lot";
+        private String noParking = "No Parking";
 
         SpinnerDialog spinnerDialog;
 
@@ -226,7 +241,9 @@ import static java.security.AccessController.getContext;
             View headerView = navView.getHeaderView(0);
             emaildisp  = (TextView) headerView.findViewById(R.id.varying_email);
             mMarkersList = new ArrayList();
+            mFilteredList = new ArrayList();
             mSearchableMarkers = new ArrayList();
+
             View checkbox = (View) navView.getMenu();
             mShaded = findViewById(R.id.shadedcheck);
 
@@ -272,6 +289,8 @@ import static java.security.AccessController.getContext;
             //take care of rotating hamburger menu
             toggle.syncState();
 
+
+
 //            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
             MenuItem checkboxSP = navView.getMenu().findItem(R.id.shadedcheck);
             MenuItem checkboxFP = navView.getMenu().findItem(R.id.freecheck);
@@ -284,102 +303,190 @@ import static java.security.AccessController.getContext;
             checkboxSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Toast.makeText(MainActivity.this, "Filtered Shaded Areas", Toast.LENGTH_SHORT).show();
-                    ParkingDetails p = new ParkingDetails();
+                    if (b){
+                        Toast.makeText(MainActivity.this, "Filtered Shaded Areas", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        shadedGlobal = "uncheck";
+                        Toast.makeText(MainActivity.this, "Unfiltered Shaded Areas", Toast.LENGTH_SHORT).show();
+
+                    }
+//                    filterMarkers();
 
                 }
             });
 
+            // FREE
             CompoundButton checkboxFPView = (CompoundButton) MenuItemCompat.getActionView(checkboxFP);
             checkboxFPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Toast.makeText(MainActivity.this, "pls2", Toast.LENGTH_SHORT).show();
-                    ParkingDetails p = new ParkingDetails();
+                    if (b){
+                        freeGlobal = "Free Parking lot";
+                        Toast.makeText(MainActivity.this, "Filtered Free Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        freeGlobal = "uncheck";
+//                        Marker marker = (Marker) mMarkersList.
+                        Toast.makeText(MainActivity.this, "Unfiltered Free Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    filterMarkers();
+                    updateMapWithFilteredMarkers();
 
                 }
             });
 
+            // PAID
             CompoundButton checkboxPPView = (CompoundButton) MenuItemCompat.getActionView(checkboxPP);
             checkboxPPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Toast.makeText(MainActivity.this, "pls5", Toast.LENGTH_SHORT).show();
-                    ParkingDetails p = new ParkingDetails();
+                    if (b){
+                        paidGlobal = "Paid Parking lot";
+                        Toast.makeText(MainActivity.this, "Filtered Paid Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        paidGlobal = "uncheck";
+                        Toast.makeText(MainActivity.this, "Unfiltered Paid Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    filterMarkers();
+                    updateMapWithFilteredMarkers();
 
                 }
             });
 
+            // MULTISTOREY
             CompoundButton checkboxMSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxMSP);
             checkboxMSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Toast.makeText(MainActivity.this, "pls7", Toast.LENGTH_SHORT).show();
-                    ParkingDetails p = new ParkingDetails();
+                    if (b){
+                        mspGlobal = "Multistorey Parking lot";
+                        Toast.makeText(MainActivity.this, "Filtered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        mspGlobal = "uncheck";
+                        Toast.makeText(MainActivity.this, "Unfiltered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
+
+                    }
+                    filterMarkers();
+                    updateMapWithFilteredMarkers();
 
                 }
             });
 
+            //DISABLED
             CompoundButton checkboxDPView = (CompoundButton) MenuItemCompat.getActionView(checkboxDP);
             checkboxDPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Toast.makeText(MainActivity.this, "plsasd", Toast.LENGTH_SHORT).show();
-                    ParkingDetails p = new ParkingDetails();
+                    if (b){
+                        disabledGlobal = "Disabled Parking";
+                        Toast.makeText(MainActivity.this, "Filtered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        disabledGlobal = "uncheck";
+                        Toast.makeText(MainActivity.this, "Unfiltered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    filterMarkers();
+                    updateMapWithFilteredMarkers();
 
                 }
             });
 
+            // ELECTRIC VEHICLE
             CompoundButton checkboxEVPView = (CompoundButton) MenuItemCompat.getActionView(checkboxEVP);
             checkboxEVPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    Toast.makeText(MainActivity.this, "pls", Toast.LENGTH_SHORT).show();
-                    ParkingDetails p = new ParkingDetails();
+                    if (b){
+                        evGlobal = "Electric vehicle lot";
+                        Toast.makeText(MainActivity.this, "Filtered EV Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        evGlobal = "uncheck";
+                        Toast.makeText(MainActivity.this, "Unfiltered EV Parking Lots", Toast.LENGTH_SHORT).show();
+                    }
+                    filterMarkers();
+                    updateMapWithFilteredMarkers();
 
                 }
             });
 
-
-
-
 //            rowItems = new ArrayList<RowItem>();
 //            mShaded.setChecked(true);
-
-
-
-
-
-
 
             Log.d(TAG, "onCreate: synced");
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+
+
+
         //end onCreate
         }
 
-       /* public boolean onCreateOptionsMenu (Menu menu){
-            getMenuInflater().inflate(R.menu.drawer_menu, menu);
-            SharedPreferences settings = getSharedPreferences("settings", 0);
-            boolean isChecked = settings.getBoolean("checkbox", false);
-            MenuItem item = menu.findItem(R.id.shadedcheck);
-            item.setChecked(isChecked);
-            return true;
+        private void filterMarkers() {
+            mFilteredList.clear();
+            for (int i=0; i<mMarkersList.size(); i++){
+                ParkingDetails pd = (ParkingDetails) mMarkersList.get(i);
+                if (pd.getTypeofParking().equals(shadedGlobal) || pd.getTypeofParking().equals(freeGlobal)
+                        || pd.getTypeofParking().equals(paidGlobal) || pd.getTypeofParking().equals(mspGlobal)
+                        || pd.getTypeofParking().equals(disabledGlobal) || pd.getTypeofParking().equals(evGlobal)){
+                    mFilteredList.add(((ParkingDetails) mMarkersList.get(i)));
+                    Log.d(TAG, "onCreate: parkingtype is " + pd.getTypeofParking() + pd.getTitle());
+                    Log.d(TAG, "filterMarkers: " + mFilteredList);
+                }
+
+            }
         }
 
-        public boolean onOptionsItemSelected (MenuItem item){
-            int id = item.getItemId();
-            if(id == R.id.shadedcheck){
-                if(item.isChecked()){
-                    ParkingDetails p = new ParkingDetails();
-                    Toast.makeText(this, "what is ths", Toast.LENGTH_SHORT).show();
-                }
+
+
+        private GoogleMap getMap(){
+            return mMap;
+        }
+
+        private void setUpClusterer(){
+            //position the map
+            getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+            mClusterManager = new ClusterManager<MarkerCluster>(this, getMap());
+            getMap().setOnCameraIdleListener(mClusterManager);
+            getMap().setOnMarkerClickListener(mClusterManager);
+            try{
+                readItems();
+                Log.d(TAG, "setUpClusterer: read the items");
+            }catch (JSONException e){
+                Toast.makeText(this, "can't read markers", Toast.LENGTH_SHORT).show();
             }
-            return super.onOptionsItemSelected(item);
-        }*/
+        }
+
+//        private void readItems() throws JSONException {
+//            InputStream inputStream = getResources().openRawResource(R.raw.radar_search);
+//            List<MarkerCluster> items = new MarkerClusterReader().read(inputStream);
+//            mClusterManager.addItems(items);
+//
+//        }
+
+        private void readItems() throws JSONException{
+            double lat = 37.41704700015034;
+            double lng = -122.074730444444;
+
+            for (int i = 0; i< 10; i++ ){
+                double offset = i/60d;
+                lat = lat + offset;
+                lng = lng + offset;
+                MarkerCluster offsetItem = new MarkerCluster(lat, lng);
+                mClusterManager.addItem(offsetItem);
+            }
+
+        }
+
+
 
 
         private void getUserDetails (){
+
+
 
             //if (user == logged in) then save to database
             Log.d(TAG, "getUserDetails: ID is " + FirebaseAuth.getInstance().getUid());
@@ -608,6 +715,8 @@ import static java.security.AccessController.getContext;
 
 
 
+
+
         //initialize
         private void init(){
             Log.d(TAG, "init: initializing");
@@ -723,8 +832,7 @@ import static java.security.AccessController.getContext;
 
                         try{
 
-
-                        for (int i = 0; i < mMarkersList.size(); i++) {
+                            for (int i = 0; i < mMarkersList.size(); i++) {
                             pDet = (ParkingDetails) mMarkersList.get(i);
                             LatLng currentMarker = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
                             String currentMarkerTitle = new String(pDet.getTitle());
@@ -732,6 +840,7 @@ import static java.security.AccessController.getContext;
                             //if the user's marker clicked on the saved in DB marker location
                             if (marker.getPosition().longitude == currentMarker.longitude &&
                                     marker.getPosition().latitude == currentMarker.latitude) {
+
 //                               Snackbar.make(findViewById(android.R.id.content), currentMarkerTitle, Snackbar.LENGTH_LONG).show();
 //                               Toast.makeText(MainActivity.this, "this is " + currentMarkerTitle, Toast.LENGTH_SHORT).show();
                                 bundle.putSerializable("key", pDet);
@@ -1180,6 +1289,20 @@ import static java.security.AccessController.getContext;
                                                          // lat  lng     type           title                   description
         // index the five items as one key e.g. Array[0] = {14, -122, Free Parking, FCSIT Student Parking, For students only}
 
+        public void updateMapWithFilteredMarkers(){
+            mMap.clear();
+            for(int i=0; i<mFilteredList.size(); i++){
+                ParkingDetails p = (ParkingDetails) mFilteredList.get(i);
+                IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+                LatLng filteredMarker = new LatLng (p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
+                mMap.addMarker(new MarkerOptions().position(filteredMarker)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTitle())));
+            }
+
+
+
+
+
+        }
 
         public void updateMapWithDatabaseMarker(){
             mMarkersList.clear();
@@ -1211,12 +1334,15 @@ import static java.security.AccessController.getContext;
                                                         mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(padet.getTitle())));
 
                                                         mSearchableMarkers.add(padet.getTitle());
+//                                                        mFilterableMarkers.add(padet.getTypeofParking());
+
 
 
                                                     }
                                                     Log.d(TAG, "onComplete: aaaa" + mSearchableMarkers.size());
                                                     Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
                                                     Log.d(TAG, "on click: Array size is now " + mMarkersList.size() + "\n");
+//                                                    Log.d(TAG, "onComplete: abcd" + mFilterableMarkers);
 
                                                     // should be not the right way, adding exponentially more markers
                                                   /*  for (int i = 0;i<mMarkersList.size();i++){
