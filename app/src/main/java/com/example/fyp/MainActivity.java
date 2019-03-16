@@ -1297,11 +1297,6 @@ import static java.security.AccessController.getContext;
                 LatLng filteredMarker = new LatLng (p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
                 mMap.addMarker(new MarkerOptions().position(filteredMarker)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTitle())));
             }
-
-
-
-
-
         }
 
         public void updateMapWithDatabaseMarker(){
@@ -1315,6 +1310,7 @@ import static java.security.AccessController.getContext;
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
+
                                     for (QueryDocumentSnapshot document : task.getResult()) {   //outer loop thru Users > ID
 //                                        ParkingDetails padet = task.getResult().toObject(ParkingDetails.class);
                                         innerLocationRef.document(document.getId())
@@ -1329,11 +1325,26 @@ import static java.security.AccessController.getContext;
                                                         ParkingDetails padet = innerDocument.toObject(ParkingDetails.class);
                                                         mMarkersList.add(padet);
                                                         IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                                                        LatLng currentUser = new LatLng(padet.getGeo_point().getLatitude(), padet.getGeo_point().getLongitude());
-                                                        Log.d(TAG, "onMapReady: putted marker" + padet.getGeo_point() + "size" + mMarkersList.size());
-                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(padet.getTitle())));
+//                                                        LatLng currentUser = new LatLng(padet.getGeo_point().getLatitude(), padet.getGeo_point().getLongitude());
+//                                                        Log.d(TAG, "onMapReady: putted marker" + padet.getGeo_point() + "size" + mMarkersList.size());
+//                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(padet.getTitle())));
 
                                                         mSearchableMarkers.add(padet.getTitle());
+                                                        QuerySnapshot qs = (QuerySnapshot) task.getResult();
+                                                        List qsl = qs.getDocuments();
+//                                                        qsl.get(task.getResult().size()-1);
+
+                                                        Log.d(TAG, "onComplete: abdd" + task.getResult().equals(task.getResult()));
+                                                        if (innerDocument.equals(qsl.get(task.getResult().size()-1))){
+                                                            mMap.clear();
+                                                            filterMarkers();
+                                                            for(int i=0; i<mFilteredList.size(); i++) {
+                                                                ParkingDetails pd = (ParkingDetails) mFilteredList.get(i);
+                                                                LatLng plotMarkers = new LatLng(pd.getGeo_point().getLatitude(), pd.getGeo_point().getLongitude());
+                                                                mMap.addMarker(new MarkerOptions().position(plotMarkers)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pd.getTitle())));
+                                                            }
+                                                        }
+
 //                                                        mFilterableMarkers.add(padet.getTypeofParking());
 
 
