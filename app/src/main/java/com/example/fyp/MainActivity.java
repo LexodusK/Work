@@ -92,6 +92,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.example.fyp.AddParkingInfo;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.ui.IconGenerator;
 
@@ -115,7 +116,7 @@ import static java.security.AccessController.getContext;
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
             AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
             parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener,
-            EditParkingInfo.BottomSheetListener//, AddParkingInfo.OnDataPass
+            EditParkingInfo.BottomSheetListener, ClusterManager.OnClusterInfoWindowClickListener<MarkerCluster>, ClusterManager.OnClusterItemInfoWindowClickListener<MarkerCluster>//, AddParkingInfo.OnDataPass
     {
 
         @Override
@@ -131,7 +132,10 @@ import static java.security.AccessController.getContext;
 
             mMap = googleMap;
             updateMapWithDatabaseMarker();
-            setUpClusterer();
+
+
+
+
             //if permission is granted, then proceed
             if (mLocationPermissionGranted) {
 //            initMap();
@@ -207,6 +211,7 @@ import static java.security.AccessController.getContext;
         private String disabledGlobal = "Disabled Parking";
         private String evGlobal = "Electric vehicle lot";
         private String noParking = "No Parking";
+        protected MarkerCluster clickedClusterItem;
 
         SpinnerDialog spinnerDialog;
 
@@ -288,6 +293,8 @@ import static java.security.AccessController.getContext;
             drawer.addDrawerListener(toggle);
             //take care of rotating hamburger menu
             toggle.syncState();
+
+
 
 
 
@@ -424,8 +431,45 @@ import static java.security.AccessController.getContext;
 
         //end onCreate
         }
+/*
+        private void setUpCluster (){
+            IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+//            getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+            mClusterManager = new ClusterManager<MarkerCluster>(this, mMap);
+            mMap.setOnCameraIdleListener(mClusterManager);
+            mMap.setOnMarkerClickListener(mClusterManager);
+            mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+            mMap.setOnInfoWindowClickListener(mClusterManager);
+            mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+           mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MarkerCluster>() {
+               @Override
+               public boolean onClusterItemClick(MarkerCluster markerCluster) {
+                   clickedClusterItem = markerCluster;
+                   return false;
+               }
+           });
+
+//           mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new MyCustomAdapterForItems());
+
+            ClusterManager clusterManager = new ClusterManager<>(getApplicationContext(),mMap);
+            ClusterRenderer clusterRenderer = new ClusterRenderer(getApplicationContext(), mMap, clusterManager );
+            MarkerOptions markerOptions = null;
+            for (int i=0; i<mMarkersList.size(); i++){
+                ParkingDetails p = (ParkingDetails) mMarkersList.get(i);
+                markerOptions = new MarkerOptions().position(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()));
+//                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTypeofParking())));
+                MarkerCluster markerCluster = new MarkerCluster(markerOptions);
+                clusterRenderer.onBeforeClusterItemRendered( markerCluster,markerOptions);
+                clusterManager.addItem(markerCluster);
+            }
+        }*/
 
         private void filterMarkers() {
+
+//                setUpCluster();
+
+//            Log.d(TAG, "onMapReady: abde" + markerCluster + markerOptions);
+
             mFilteredList.clear();
             for (int i=0; i<mMarkersList.size(); i++){
                 ParkingDetails pd = (ParkingDetails) mMarkersList.get(i);
@@ -434,7 +478,7 @@ import static java.security.AccessController.getContext;
                         || pd.getTypeofParking().equals(disabledGlobal) || pd.getTypeofParking().equals(evGlobal)){
                     mFilteredList.add(((ParkingDetails) mMarkersList.get(i)));
                     Log.d(TAG, "onCreate: parkingtype is " + pd.getTypeofParking() + pd.getTitle());
-                    Log.d(TAG, "filterMarkers: " + mFilteredList);
+//                    Log.d(TAG, "filterMarkers: " + mFilteredList);
                 }
 
             }
@@ -448,14 +492,80 @@ import static java.security.AccessController.getContext;
 
         private void setUpClusterer(){
             //position the map
-            getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+            mMap.clear();
+//            mClusterManager.clearItems();
+//            getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
             mClusterManager = new ClusterManager<MarkerCluster>(this, getMap());
             getMap().setOnCameraIdleListener(mClusterManager);
             getMap().setOnMarkerClickListener(mClusterManager);
+            getMap().setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    Bundle bundle = new Bundle();
+                    ParkingDetails pDet = new ParkingDetails();
+
+
+                    try{
+
+                        for (int i = 0; i < mFilteredList.size(); i++) {
+                            pDet = (ParkingDetails) mFilteredList.get(i);
+                            LatLng currentMarker = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+                            String currentMarkerTitle = new String(pDet.getTitle());
+                            Log.d(TAG, "onMarkerClick: " + currentMarker + " " + currentMarkerTitle + " " + marker.getPosition());
+                            //if the user's marker clicked on the saved in DB marker location
+                            if (marker.getPosition().longitude == currentMarker.longitude &&
+                                    marker.getPosition().latitude == currentMarker.latitude) {
+
+//                               Snackbar.make(findViewById(android.R.id.content), currentMarkerTitle, Snackbar.LENGTH_LONG).show();
+//                               Toast.makeText(MainActivity.this, "this is " + currentMarkerTitle, Toast.LENGTH_SHORT).show();
+                                bundle.putSerializable("key", pDet);
+                                break;
+                            }
+                            else {
+//                                    return true;
+//                                return false;
+                            }
+                        }
+                    }catch (NullPointerException e){
+                        Log.d(TAG, "onMarkerClick: " + e.getMessage());
+                    }
+
+
+//                    ParkingDetails pDet = new ParkingDetails();
+//                    for (int i = 0;i<mMarkersList.size();i++){
+//                        pDet = (ParkingDetails) mMarkersList.get(i);
+//                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
+//                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
+//                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
+//                    }
+
+                    if (FirebaseAuth.getInstance().getUid().equals(pDet.getUser_id())){
+                        parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
+                        bottomSheet.setArguments(bundle);
+                        bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+                    }else{
+                        parkinginfo_without_editdelete bottomSheet = new parkinginfo_without_editdelete();
+                        bottomSheet.setArguments(bundle);
+                        bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+                    }
+
+//                    Toast.makeText(MainActivity.this, "Clicked on marker", Toast.LENGTH_SHORT).show();
+//                    Snackbar.make(findViewById(android.R.id.content), "clickity click", Snackbar.LENGTH_LONG).show();
+//                    marker.remove();
+                    return false;
+                }
+
+
+
+
+
+
+            });
             try{
                 readItems();
                 Log.d(TAG, "setUpClusterer: read the items");
             }catch (JSONException e){
+                Log.d(TAG, "setUpClusterer: failed to read");
                 Toast.makeText(this, "can't read markers", Toast.LENGTH_SHORT).show();
             }
         }
@@ -470,16 +580,56 @@ import static java.security.AccessController.getContext;
         private void readItems() throws JSONException{
             double lat = 37.41704700015034;
             double lng = -122.074730444444;
+            Log.d(TAG, "readItems: abc" + mMarkersList.size());
 
-            for (int i = 0; i< 10; i++ ){
-                double offset = i/60d;
-                lat = lat + offset;
-                lng = lng + offset;
-                MarkerCluster offsetItem = new MarkerCluster(lat, lng);
-                mClusterManager.addItem(offsetItem);
+            mClusterManager.clearItems();
+
+            for (int i = 0; i< mFilteredList.size(); i++ ){
+//                double offset = i/60d;
+//                lat = lat + offset;
+//                lng = lng + offset;
+
+//                ClusterManager clusterManager = new ClusterManager<>(getApplication(),mMap);
+                ClusterRenderer clusterRenderer = new ClusterRenderer(getApplication(), mMap, mClusterManager );
+//                MarkerOptions markerOptions = null;
+//                for (int i=0; i<mMarkersList.size(); i++){
+//                    ParkingDetails p = (ParkingDetails) mMarkersList.get(i);
+//                    markerOptions = new MarkerOptions().position(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()));
+////                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTypeofParking())));
+//                    MarkerCluster markerCluster = new MarkerCluster(markerOptions);
+//                    clusterRenderer.onBeforeClusterItemRendered( markerCluster,markerOptions);
+//                    clusterManager.addItem(markerCluster);
+//                }
+//            }
+
+                ParkingDetails p = (ParkingDetails) mFilteredList.get(i);
+                   IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+//                List<MarkerCluster> items = new MarkerClusterReader().read();
+//                mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
+                LatLng currentUser = new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions()
+                                                .position(currentUser)
+                                                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTitle())));
+
+
+//                mMap.addMarker(markerOptions);
+//                MarkerCluster offsetItem = new MarkerCluster(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
+                MarkerCluster off = new MarkerCluster(markerOptions);
+                Log.d(TAG, "readItems:dd " + off.getIcon());
+                clusterRenderer.onBeforeClusterItemRendered(off, markerOptions);
+//                MarkerCluster offsetItem = new MarkerCluster(lat, lng);
+//                mMap.addMarker(new MarkerOptions().position()).setIcon();
+//                  MarkerCluster offsetItem = new MarkerCluster(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude(), p.getTitle(), p.getDescription());
+                mClusterManager.addItem(off);
+//                mClusterManager.getMarkerCollection();
+                Log.d(TAG, "readItems: " + mMarkersList.size());
             }
 
         }
+
+
+
+
 
 
 
@@ -1281,8 +1431,9 @@ import static java.security.AccessController.getContext;
                 }
             });
 
-            mMap.clear();
+
             updateMapWithDatabaseMarker();
+            mMap.clear();
         }
 
         // save a particular marker's long lat with the type, title and description
@@ -1290,13 +1441,16 @@ import static java.security.AccessController.getContext;
         // index the five items as one key e.g. Array[0] = {14, -122, Free Parking, FCSIT Student Parking, For students only}
 
         public void updateMapWithFilteredMarkers(){
+
+            setUpClusterer();
             mMap.clear();
-            for(int i=0; i<mFilteredList.size(); i++){
+           /* for(int i=0; i<mFilteredList.size(); i++){
                 ParkingDetails p = (ParkingDetails) mFilteredList.get(i);
-                IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-                LatLng filteredMarker = new LatLng (p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
-                mMap.addMarker(new MarkerOptions().position(filteredMarker)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTitle())));
-            }
+
+//                IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+//                LatLng filteredMarker = new LatLng (p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
+//                mMap.addMarker(new MarkerOptions().position(filteredMarker)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTitle())));
+            }*/
         }
 
         public void updateMapWithDatabaseMarker(){
@@ -1336,13 +1490,16 @@ import static java.security.AccessController.getContext;
 
                                                         Log.d(TAG, "onComplete: abdd" + task.getResult().equals(task.getResult()));
                                                         if (innerDocument.equals(qsl.get(task.getResult().size()-1))){
-                                                            mMap.clear();
+
                                                             filterMarkers();
-                                                            for(int i=0; i<mFilteredList.size(); i++) {
+                                                            setUpClusterer();
+                                                            mMap.clear();
+                                                            /*for(int i=0; i<mFilteredList.size(); i++) {
                                                                 ParkingDetails pd = (ParkingDetails) mFilteredList.get(i);
                                                                 LatLng plotMarkers = new LatLng(pd.getGeo_point().getLatitude(), pd.getGeo_point().getLongitude());
-                                                                mMap.addMarker(new MarkerOptions().position(plotMarkers)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pd.getTitle())));
-                                                            }
+
+//                                                              mMap.addMarker(new MarkerOptions().position(plotMarkers)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pd.getTitle())));
+                                                            }*/
                                                         }
 
 //                                                        mFilterableMarkers.add(padet.getTypeofParking());
@@ -1402,10 +1559,27 @@ import static java.security.AccessController.getContext;
 
         @Override
         public void onDelete() {
-            mMap.clear();
+
             updateMapWithDatabaseMarker();
+            mMap.clear();
         }
 
 
+        @Override
+        public void onClusterInfoWindowClick(Cluster<MarkerCluster> cluster) {
+
+        }
+
+        @Override
+        public void onClusterItemInfoWindowClick(MarkerCluster markerCluster) {
+//            Intent placesIntent = new Intent(getBaseContext(), PlaceDetailsActivity.class);
+//            String reference = item.getReference();
+//
+//            placesIntent.putExtra("name", item.getTitle());
+//            placesIntent.putExtra("reference", reference);
+//            placesIntent.putExtra("sourcelat", myLatitude);
+//            placesIntent.putExtra("sourcelng", myLongitude);
+//            startActivity(placesIntent);
+        }
     }
 
