@@ -20,13 +20,19 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.example.fyp.MainActivity;
 import com.example.fyp.Login;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import static android.support.constraint.Constraints.TAG;
+
 
 public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
     //set main activity as the listener
     private BottomSheetListener mListener;
     private MarkerLocation mMarkerRemove;
+    private GoogleMap mMap;
+
     //    private TextInputLayout textInputTitle;
 //    private TextInputLayout textInputDescription;
 
@@ -35,6 +41,7 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         //inflate the layout for the fragment
         View v = inflater.inflate(R.layout.addcancelparkingbottomsheet, container, false);
 //        textInputTitle = v.findViewById(R.id.Title);
@@ -65,11 +72,11 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
 
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom((mMarkerRemove.getMarker().getPosition()), 5f));
+                Log.d(TAG, "onClick: " + mMarkerRemove.getMarker().getPosition());
                 mListener.onDismiss(true);
                 mMarkerRemove.getMarker().remove();
                 dismiss();
-
-
 
 //                Toast.makeText(getActivity(), "222222", Toast.LENGTH_SHORT).show();
             }
@@ -82,6 +89,7 @@ public class AddCancelParkingBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
 //        super.onDismiss(dialog);
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom((mMarkerRemove.getMarker().getPosition()), 5f));
         mListener.onDismiss(true);
         mMarkerRemove.getMarker().remove();
 

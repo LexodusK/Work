@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -30,6 +32,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -47,6 +50,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,6 +102,7 @@ import com.google.maps.android.ui.IconGenerator;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -108,6 +113,7 @@ import java.util.Map;
 
 import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 import static java.security.AccessController.getContext;
 
@@ -116,7 +122,8 @@ import static java.security.AccessController.getContext;
             GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
             AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
             parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener,
-            EditParkingInfo.BottomSheetListener, ClusterManager.OnClusterInfoWindowClickListener<MarkerCluster>, ClusterManager.OnClusterItemInfoWindowClickListener<MarkerCluster>//, AddParkingInfo.OnDataPass
+            EditParkingInfo.BottomSheetListener, ClusterManager.OnClusterInfoWindowClickListener<MarkerCluster>,
+            ClusterManager.OnClusterItemInfoWindowClickListener<MarkerCluster>//, AddParkingInfo.OnDataPass
     {
 
         @Override
@@ -160,6 +167,8 @@ import static java.security.AccessController.getContext;
         private static final String TAG = "MainActivity";
         private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
         private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+        private double camLat;
+        private double camLong;
         private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
         private static final int ERROR_DIALOG_REQUEST = 9001;
         private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
@@ -173,7 +182,11 @@ import static java.security.AccessController.getContext;
 
         //widgets
         private AutoCompleteTextView mSearchText;
-        private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker;
+        private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage;
+        private Button mShadedButton;
+        private SeekBar mSeekBar;
+        private TextView mTextSeekBar;
+        private TextView mTextImage;
 
         //vars
         private boolean mLocationPermissionGranted = false;
@@ -214,6 +227,7 @@ import static java.security.AccessController.getContext;
         protected MarkerCluster clickedClusterItem;
 
         SpinnerDialog spinnerDialog;
+        Images mImage;
 
 //        String[] menutitles;
 //        TypedArray menuIcons;
@@ -237,6 +251,11 @@ import static java.security.AccessController.getContext;
             mRecenter = (ImageView) findViewById(R.id.ic_recenter);
             mInfo = (ImageView) findViewById(R.id.place_info);
             mPlacePicker = (ImageView) findViewById(R.id.place_picker);
+            mShadedButton = (Button) findViewById(R.id.buttonForShaded);
+            mShadedImage = (ImageView) findViewById(R.id.imageForShaded);
+            mTextSeekBar = (TextView) findViewById(R.id.textForseekbar);
+            mTextImage = (TextView) findViewById(R.id.textForImage);
+            mSeekBar = (SeekBar) findViewById(R.id.seekbar);
             mDb = FirebaseFirestore.getInstance();
             textInputTitle = findViewById(R.id.Title);
             textInputDescription = findViewById(R.id.Description);
@@ -310,13 +329,13 @@ import static java.security.AccessController.getContext;
             checkboxSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
                     if (b){
                         Toast.makeText(MainActivity.this, "Filtered Shaded Areas", Toast.LENGTH_SHORT).show();
                     }
                     else{
                         shadedGlobal = "uncheck";
                         Toast.makeText(MainActivity.this, "Unfiltered Shaded Areas", Toast.LENGTH_SHORT).show();
-
                     }
 //                    filterMarkers();
 
@@ -328,6 +347,7 @@ import static java.security.AccessController.getContext;
             checkboxFPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mMap.clear();
                     if (b){
                         freeGlobal = "Free Parking lot";
                         Toast.makeText(MainActivity.this, "Filtered Free Parking Lots", Toast.LENGTH_SHORT).show();
@@ -348,6 +368,7 @@ import static java.security.AccessController.getContext;
             checkboxPPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mMap.clear();
                     if (b){
                         paidGlobal = "Paid Parking lot";
                         Toast.makeText(MainActivity.this, "Filtered Paid Parking Lots", Toast.LENGTH_SHORT).show();
@@ -367,6 +388,7 @@ import static java.security.AccessController.getContext;
             checkboxMSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mMap.clear();
                     if (b){
                         mspGlobal = "Multistorey Parking lot";
                         Toast.makeText(MainActivity.this, "Filtered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
@@ -387,6 +409,7 @@ import static java.security.AccessController.getContext;
             checkboxDPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mMap.clear();
                     if (b){
                         disabledGlobal = "Disabled Parking";
                         Toast.makeText(MainActivity.this, "Filtered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
@@ -406,6 +429,7 @@ import static java.security.AccessController.getContext;
             checkboxEVPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mMap.clear();
                     if (b){
                         evGlobal = "Electric vehicle lot";
                         Toast.makeText(MainActivity.this, "Filtered EV Parking Lots", Toast.LENGTH_SHORT).show();
@@ -420,16 +444,94 @@ import static java.security.AccessController.getContext;
                 }
             });
 
+            mSeekBar.setVisibility(View.INVISIBLE);
+            mTextSeekBar.setVisibility(View.INVISIBLE);
+            mTextImage.setVisibility(View.INVISIBLE);
+
+
+            mSeekBar.incrementProgressBy(1);
+            mSeekBar.setMax(12);
+
+            clickShadedButton();
+            seekbarchange();
 //            rowItems = new ArrayList<RowItem>();
 //            mShaded.setChecked(true);
 
             Log.d(TAG, "onCreate: synced");
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+ //end onCreate
+        }
+
+        private void clickShadedButton (){
+            mShadedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(MainActivity.this, "called image", Toast.LENGTH_SHORT).show();
+                    int imageResource = getResources().getIdentifier("@drawable/sample", null, getPackageName());
+                    mShadedImage.setImageResource(imageResource);
+                    PhotoViewAttacher photoView = new PhotoViewAttacher(mShadedImage);
+                    if (mShadedImage.getVisibility() == view.INVISIBLE){
+                        photoView.update();
+                        mShadedImage.setVisibility(view.VISIBLE);
+                        mSeekBar.setVisibility(view.VISIBLE);
+                        mTextSeekBar.setVisibility(view.VISIBLE);
+                        mTextImage.setVisibility(view.VISIBLE);
+                        Log.d(TAG, "onClick:  visible");
+                    }else if (mShadedImage.getVisibility() == view.VISIBLE) {
+                        mShadedImage.setVisibility(view.INVISIBLE);
+                        mSeekBar.setVisibility(view.INVISIBLE);
+                        mTextSeekBar.setVisibility(view.INVISIBLE);
+                        mTextImage.setVisibility(view.INVISIBLE);
+
+                        Log.d(TAG, "onClick: invisible");
+                    }
+                }
+            });
+        }
+
+        private void seekbarchange (){
+            mSeekBar.setProgress(0);
+            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                   /*if (progress < 6 ){
+                       progress = progress + 6;
+                       mTextSeekBar.setText("" + progress + " am");
+                   }
+                   else if (progress == 6){
+                       progress = 12;
+                       mTextSeekBar.setText("" + progress + " pm");
+                    }
+                    else{
+                       progress = (progress-7) + 1;
+                       mTextSeekBar.setText("" + progress + " pm");
+                   }*/
+                   switch (progress){
+                       case 0:
+                           progress = 6;
+                           mTextSeekBar.setText(" " + progress + " am");
+                           break;
+                       case 1:
+                           progress = 7;
+                           mTextSeekBar.setText(" " + progress + " am");
+                           break;
+                   }
 
 
 
-        //end onCreate
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
         }
 /*
         private void setUpCluster (){
@@ -539,11 +641,19 @@ import static java.security.AccessController.getContext;
 //                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
 //                    }
 
-                    if (FirebaseAuth.getInstance().getUid().equals(pDet.getUser_id())){
+                    if (FirebaseAuth.getInstance().getUid() != null){
+                     if (!FirebaseAuth.getInstance().getUid().equals(pDet.getUser_id().toString())){
+                        parkinginfo_without_editdelete bottomSheet = new parkinginfo_without_editdelete();
+                        bottomSheet.setArguments(bundle);
+                        bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+                    }
+                    else if (FirebaseAuth.getInstance().getUid().equals(pDet.getUser_id().toString())){
                         parkinginfo_with_edit_delete bottomSheet = new parkinginfo_with_edit_delete();
                         bottomSheet.setArguments(bundle);
                         bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
-                    }else{
+                    }
+                    }else
+                    {
                         parkinginfo_without_editdelete bottomSheet = new parkinginfo_without_editdelete();
                         bottomSheet.setArguments(bundle);
                         bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
@@ -1037,8 +1147,13 @@ import static java.security.AccessController.getContext;
                 public void onMapLongClick(LatLng point) {
 
                 if (FirebaseAuth.getInstance().getUid()!=null) {
-                    moveCamera(new LatLng(point.latitude, point.longitude), DEFAULT_ZOOM );
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.latitude, point.longitude), 20f));
+//                    moveCamera(new LatLng(point.latitude, point.longitude), 20f );
 //
+                     camLat = point.latitude;
+                     camLong = point.longitude;
+
+
                     onmaplongclickedpoint = new GeoPoint(point.latitude, point.longitude);
 //
 //
@@ -1050,6 +1165,7 @@ import static java.security.AccessController.getContext;
                     mLoc.setMarker(tMarker);
                     Bundle markerRemove = new Bundle();
                     markerRemove.putSerializable("marker", mLoc);
+
 //
                     AddCancelParkingBottomSheet bottomSheet = new AddCancelParkingBottomSheet();
                     bottomSheet.setArguments(markerRemove);
@@ -1544,6 +1660,8 @@ import static java.security.AccessController.getContext;
         }
 
 
+
+
         @Override
         public void onDismiss(boolean bool) {
             if (mMarkersList.get(mMarkersList.size()-1).getClass() == Marker.class) {
@@ -1553,6 +1671,7 @@ import static java.security.AccessController.getContext;
                 marker.setVisible(false);
                 mMarkersList.remove(mMarkersList.size() - 1);
                 Log.d(TAG, "onDismiss: clik");
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(camLat,camLong), DEFAULT_ZOOM));
             }
         }
 

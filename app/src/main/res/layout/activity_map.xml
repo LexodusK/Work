@@ -5,15 +5,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:fitsSystemWindows="true">
+   <!-- tools:openDrawer="start">-->
  <!--     uncomment to show the sliding drawer-->
+
 
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:text="Click here for shaded"
+            android:id="@+id/buttonForShaded"/>
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -22,6 +33,36 @@
             android:id="@+id/map"
             tools:context=".MapsActivity"
             android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imageForShaded"
+            android:id="@+id/textForImage"
+            android:text="TEST"/>
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageForShaded"
+            />
+
+        <SeekBar
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonForShaded"
+            android:layout_centerInParent="true"
+            android:id="@+id/seekbar"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/seekbar"
+            android:layout_centerInParent="true"
+            android:id="@+id/textForseekbar"
+            android:text="6 am"
+            android:textSize="30sp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
