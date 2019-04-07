@@ -15,6 +15,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -54,6 +55,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.fyp.models.FloatingMarkerTitlesOverlay;
 import com.example.fyp.models.PlaceInfo;
 import com.example.fyp.ParkingDetails;
@@ -109,6 +111,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import com.example.fyp.Images;
 
 
 import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
@@ -140,6 +143,9 @@ import static java.security.AccessController.getContext;
             mMap = googleMap;
             updateMapWithDatabaseMarker();
 
+//            urlpaam6 =  "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotB%2Fpbam6.png?alt=media&token=b3816b07-120a-462d-bc04-ae3b7723c32e";
+//            urlpapm12 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotB%2Fpbpm12.png?alt=media&token=56d8e9d4-066f-4b5b-9a2f-993ec78459b1";
+
 
 
 
@@ -159,7 +165,6 @@ import static java.security.AccessController.getContext;
                 init();
 
             }
-
 
         }
 
@@ -182,11 +187,10 @@ import static java.security.AccessController.getContext;
 
         //widgets
         private AutoCompleteTextView mSearchText;
-        private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage;
+        private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage, mCancelShadedParking;
         private Button mShadedButton;
         private SeekBar mSeekBar;
         private TextView mTextSeekBar;
-        private TextView mTextImage;
 
         //vars
         private boolean mLocationPermissionGranted = false;
@@ -214,7 +218,7 @@ import static java.security.AccessController.getContext;
         private ArrayList mMarkersList;
         private ArrayList mFilteredList;
         private ArrayList mSearchableMarkers;
-        private ArrayList mFilterableMarkers;
+        private ArrayList mShadedParkingLotsZone;
         private CheckBox mShaded;
         private ClusterManager<MarkerCluster> mClusterManager;
         private String shadedGlobal = "Shaded Parking lot";
@@ -226,7 +230,23 @@ import static java.security.AccessController.getContext;
         private String noParking = "No Parking";
         protected MarkerCluster clickedClusterItem;
 
+        private String urlpaam6;  private String urlpbam6;  private String urlpcam6;
+        private String urlpaam7;  private String urlpbam7;  private String urlpcam7;
+        private String urlpaam8;  private String urlpbam8;  private String urlpcam8;
+        private String urlpaam9;  private String urlpbam9;  private String urlpcam9;
+        private String urlpaam10; private String urlpbam10; private String urlpcam10;
+        private String urlpaam11; private String urlpbam11; private String urlpcam11;
+        private String urlpapm12; private String urlpbpm12; private String urlpcpm12;
+        private String urlpapm1;  private String urlpbpm1;  private String urlpcpm1;
+        private String urlpapm2;  private String urlpbpm2;  private String urlpcpm2;
+        private String urlpapm3;  private String urlpbpm3;  private String urlpcpm3;
+        private String urlpapm4;  private String urlpbpm4;  private String urlpcpm4;
+        private String urlpapm5;  private String urlpbpm5;  private String urlpcpm5;
+        private String urlpapm6;  private String urlpbpm6;  private String urlpcpm6;
+
+
         SpinnerDialog spinnerDialog;
+        SpinnerDialog spinnerForShaded;
         Images mImage;
 
 //        String[] menutitles;
@@ -249,12 +269,12 @@ import static java.security.AccessController.getContext;
             setContentView(R.layout.activity_map);
             mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
             mRecenter = (ImageView) findViewById(R.id.ic_recenter);
-            mInfo = (ImageView) findViewById(R.id.place_info);
+//            mInfo = (ImageView) findViewById(R.id.place_info);
             mPlacePicker = (ImageView) findViewById(R.id.place_picker);
             mShadedButton = (Button) findViewById(R.id.buttonForShaded);
             mShadedImage = (ImageView) findViewById(R.id.imageForShaded);
             mTextSeekBar = (TextView) findViewById(R.id.textForseekbar);
-            mTextImage = (TextView) findViewById(R.id.textForImage);
+            mCancelShadedParking = (ImageView) findViewById(R.id.imageForCancelShadedParking);
             mSeekBar = (SeekBar) findViewById(R.id.seekbar);
             mDb = FirebaseFirestore.getInstance();
             textInputTitle = findViewById(R.id.Title);
@@ -267,9 +287,25 @@ import static java.security.AccessController.getContext;
             mMarkersList = new ArrayList();
             mFilteredList = new ArrayList();
             mSearchableMarkers = new ArrayList();
+            mShadedParkingLotsZone = new ArrayList();
 
             View checkbox = (View) navView.getMenu();
             mShaded = findViewById(R.id.shadedcheck);
+
+            Images imageURL = new Images();
+            urlpaam6 = imageURL.getUrlpaam6();    urlpbam6 = imageURL.getUrlpbam6();    urlpcam6 = imageURL.getUrlpcam6();
+            urlpaam7 = imageURL.getUrlpaam7();    urlpbam7 = imageURL.getUrlpbam7();    urlpcam7 = imageURL.getUrlpcam7();
+            urlpaam8 = imageURL.getUrlpaam8();    urlpbam8 = imageURL.getUrlpbam8();    urlpcam8 = imageURL.getUrlpcam8();
+            urlpaam9 = imageURL.getUrlpaam9();    urlpbam9 = imageURL.getUrlpbam9();    urlpcam9 = imageURL.getUrlpcam9();
+            urlpaam10 = imageURL.getUrlpaam10();  urlpbam10 = imageURL.getUrlpbam10();  urlpcam10 = imageURL.getUrlpcam10();
+            urlpaam11 = imageURL.getUrlpaam11();  urlpbam11 = imageURL.getUrlpbam11();  urlpcam11 = imageURL.getUrlpcam11();
+            urlpapm12 = imageURL.getUrlpapm12();  urlpbpm12 = imageURL.getUrlpbpm12();  urlpcpm12 = imageURL.getUrlpcpm12();
+            urlpapm1 = imageURL.getUrlpapm1();    urlpbpm1 = imageURL.getUrlpbpm1();    urlpcpm1 = imageURL.getUrlpcpm1();
+            urlpapm2 = imageURL.getUrlpapm2();    urlpbpm2 = imageURL.getUrlpbpm2();    urlpcpm2 = imageURL.getUrlpcpm2();
+            urlpapm3 = imageURL.getUrlpapm3();    urlpbpm3 = imageURL.getUrlpbpm3();    urlpcpm3 = imageURL.getUrlpcpm3();
+            urlpapm4 = imageURL.getUrlpapm4();    urlpbpm4 = imageURL.getUrlpbpm4();    urlpcpm4 = imageURL.getUrlpcpm4();
+            urlpapm5 = imageURL.getUrlpapm5();    urlpbpm5 = imageURL.getUrlpbpm5();    urlpcpm5 = imageURL.getUrlpcpm5();
+            urlpapm6 = imageURL.getUrlpapm6();    urlpbpm6 = imageURL.getUrlpbpm6();    urlpcpm6 = imageURL.getUrlpcpm6();
 
             spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
             spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
@@ -282,7 +318,10 @@ import static java.security.AccessController.getContext;
                     Log.d(TAG, "onClick: " + mMarkersList.get(position));
                     p = (ParkingDetails) mMarkersList.get(position);
 
-                    moveCamera(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM);
+//                    moveCamera(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM);
+//                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.latitude, point.longitude), 20f));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM) );
+
                 }
             });
 
@@ -312,10 +351,6 @@ import static java.security.AccessController.getContext;
             drawer.addDrawerListener(toggle);
             //take care of rotating hamburger menu
             toggle.syncState();
-
-
-
-
 
 //            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
             MenuItem checkboxSP = navView.getMenu().findItem(R.id.shadedcheck);
@@ -446,14 +481,16 @@ import static java.security.AccessController.getContext;
 
             mSeekBar.setVisibility(View.INVISIBLE);
             mTextSeekBar.setVisibility(View.INVISIBLE);
-            mTextImage.setVisibility(View.INVISIBLE);
+            mCancelShadedParking.setVisibility(View.INVISIBLE);
+            mShadedImage.setVisibility(View.INVISIBLE);
 
 
             mSeekBar.incrementProgressBy(1);
             mSeekBar.setMax(12);
 
             clickShadedButton();
-            seekbarchange();
+            hideAllShaded();
+
 //            rowItems = new ArrayList<RowItem>();
 //            mShaded.setChecked(true);
 
@@ -463,76 +500,252 @@ import static java.security.AccessController.getContext;
  //end onCreate
         }
 
+        private void hideAllShaded(){
+          mCancelShadedParking.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                  if (mShadedImage.getVisibility() == view.VISIBLE) {
+                                        mShadedImage.setVisibility(view.INVISIBLE);
+                                        mSeekBar.setVisibility(view.INVISIBLE);
+                                        mTextSeekBar.setVisibility(view.INVISIBLE);
+                                        mCancelShadedParking.setVisibility(view.INVISIBLE);
+                  }
+              }
+          });
+        }
+
+
         private void clickShadedButton (){
             mShadedButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
+
+
+
+                    mShadedParkingLotsZone.clear();
+                    mShadedParkingLotsZone.add("Parking Lot Zone A ( FSTS, FIT, FENG )");
+                    mShadedParkingLotsZone.add("Parking Lot Zone B ( DeTAR, Chancellory, FLC )");
+                    mShadedParkingLotsZone.add("Parking Lot Zone C ( FSS, FACA, FCSHD, FMHS, CAIS )");
+
+                    spinnerForShaded = new SpinnerDialog(MainActivity.this, mShadedParkingLotsZone, "Select Shaded Parking Lot Zone");
+                    spinnerForShaded.showSpinerDialog();
+                    spinnerForShaded.bindOnSpinerListener(new OnSpinerItemClick() {
+
+
+
+                        @Override
+                        public void onClick(String item, final int position) {
+                            Toast.makeText(MainActivity.this, "Selected " + item , Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "onClick: " + position);
+                            PhotoViewAttacher photoView = new PhotoViewAttacher(mShadedImage);
+                            photoView.update();
+
+
+
+                                mSeekBar.setProgress(0);
+
+                                if (position == 0 || position == 1 || position ==2){
+                                    if (mShadedImage.getVisibility() == view.INVISIBLE){
+                                        mShadedImage.setVisibility(view.VISIBLE);
+                                        mSeekBar.setVisibility(view.VISIBLE);
+                                        mTextSeekBar.setVisibility(view.VISIBLE);
+                                        mCancelShadedParking.setVisibility(view.VISIBLE);
+                                        Log.d(TAG, "onClick:  visible");
+                                    }
+
+
+                                    mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                        @Override
+                                        public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+
+                                            switch (progress){
+                                                case 0:
+                                                    progress = 6;
+                                                    mTextSeekBar.setText(" " + progress + " am");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpaam6).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbam6).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcam6).into(mShadedImage);
+                                                    }
+
+                                                    break;
+                                                case 1:
+                                                    progress = 7;
+                                                    mTextSeekBar.setText(" " + progress + " am");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpaam7).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbam7).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcam7).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    progress = 8;
+                                                    mTextSeekBar.setText(" " + progress + " am");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpaam8).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbam8).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcam8).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 3:
+                                                    progress = 9;
+                                                    mTextSeekBar.setText(" " + progress + " am");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpaam9).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbam9).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcam9).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 4:
+                                                    progress = 10;
+                                                    mTextSeekBar.setText(" " + progress + " am");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpaam10).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbam10).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcam10).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 5:
+                                                    progress = 11;
+                                                    mTextSeekBar.setText(" " + progress + " am");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpaam11).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbam11).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcam11).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 6:
+                                                    progress = 12;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm12).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm12).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm12).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 7:
+                                                    progress = 1;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm1).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm1).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm1).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 8:
+                                                    progress = 2;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm2).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm2).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm2).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 9:
+                                                    progress = 3;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm3).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm3).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm3).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 10:
+                                                    progress = 4;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm4).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm4).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm4).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 11:
+                                                    progress = 5;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm5).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm5).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm5).into(mShadedImage);
+                                                    }
+                                                    break;
+                                                case 12:
+                                                    progress = 6;
+                                                    mTextSeekBar.setText(" " + progress + " pm");
+                                                    if (position==0){
+                                                        Glide.with(getApplicationContext()).load(urlpapm6).into(mShadedImage);
+                                                    }else if (position == 1){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm6).into(mShadedImage);
+                                                    }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpcpm6).into(mShadedImage);
+                                                    }
+                                                    break;
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                        }
+
+                                        @Override
+                                        public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                        }
+                                    });
+                                }
+
+                            }
+
+
+                    });
+
                     Toast.makeText(MainActivity.this, "called image", Toast.LENGTH_SHORT).show();
-                    int imageResource = getResources().getIdentifier("@drawable/sample", null, getPackageName());
-                    mShadedImage.setImageResource(imageResource);
-                    PhotoViewAttacher photoView = new PhotoViewAttacher(mShadedImage);
-                    if (mShadedImage.getVisibility() == view.INVISIBLE){
-                        photoView.update();
-                        mShadedImage.setVisibility(view.VISIBLE);
-                        mSeekBar.setVisibility(view.VISIBLE);
-                        mTextSeekBar.setVisibility(view.VISIBLE);
-                        mTextImage.setVisibility(view.VISIBLE);
-                        Log.d(TAG, "onClick:  visible");
-                    }else if (mShadedImage.getVisibility() == view.VISIBLE) {
-                        mShadedImage.setVisibility(view.INVISIBLE);
-                        mSeekBar.setVisibility(view.INVISIBLE);
-                        mTextSeekBar.setVisibility(view.INVISIBLE);
-                        mTextImage.setVisibility(view.INVISIBLE);
 
-                        Log.d(TAG, "onClick: invisible");
-                    }
+//                    PhotoViewAttacher photoView = new PhotoViewAttacher(mShadedImage);
+//                    if (mShadedImage.getVisibility() == view.INVISIBLE){
+//                        photoView.update();
+//                        mShadedImage.setVisibility(view.VISIBLE);
+//                        mSeekBar.setVisibility(view.VISIBLE);
+//                        mTextSeekBar.setVisibility(view.VISIBLE);
+//                        mTextImage.setVisibility(view.VISIBLE);
+//                        Log.d(TAG, "onClick:  visible");
+//                    }else if (mShadedImage.getVisibility() == view.VISIBLE) {
+//                        mShadedImage.setVisibility(view.INVISIBLE);
+//                        mSeekBar.setVisibility(view.INVISIBLE);
+//                        mTextSeekBar.setVisibility(view.INVISIBLE);
+//                        mTextImage.setVisibility(view.INVISIBLE);
+//
+//                        Log.d(TAG, "onClick: invisible");
+//                    }
                 }
             });
         }
 
-        private void seekbarchange (){
-            mSeekBar.setProgress(0);
-            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                   /*if (progress < 6 ){
-                       progress = progress + 6;
-                       mTextSeekBar.setText("" + progress + " am");
-                   }
-                   else if (progress == 6){
-                       progress = 12;
-                       mTextSeekBar.setText("" + progress + " pm");
-                    }
-                    else{
-                       progress = (progress-7) + 1;
-                       mTextSeekBar.setText("" + progress + " pm");
-                   }*/
-                   switch (progress){
-                       case 0:
-                           progress = 6;
-                           mTextSeekBar.setText(" " + progress + " am");
-                           break;
-                       case 1:
-                           progress = 7;
-                           mTextSeekBar.setText(" " + progress + " am");
-                           break;
-                   }
-
-
-
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-            });
-        }
 /*
         private void setUpCluster (){
             IconGenerator iconFactory = new IconGenerator(MainActivity.this);
@@ -819,6 +1032,8 @@ import static java.security.AccessController.getContext;
             }
         }
 
+
+
         @Override
         public void onBackPressed() {
             if (drawer.isDrawerOpen(GravityCompat.START)){
@@ -1047,7 +1262,7 @@ import static java.security.AccessController.getContext;
             });
 
             //clicked on extra info to prompt the additional info
-            mInfo.setOnClickListener(new View.OnClickListener() {
+            /*mInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Log.d(TAG, "onClick: clicked place info");
@@ -1062,7 +1277,9 @@ import static java.security.AccessController.getContext;
                         Log.e(TAG, "onClick: NullPointerException: " + e.getMessage() );
                     }
                 }
-            });
+            });*/
+
+
             //clicked on map icon to reveal surrounding things
             mPlacePicker.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1207,6 +1424,7 @@ import static java.security.AccessController.getContext;
 
                 moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                         address.getAddressLine(0));
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM));
             }
         }
 
@@ -1435,7 +1653,6 @@ import static java.security.AccessController.getContext;
                     }catch (NullPointerException e){
                         Toast.makeText(this, "No app can handle this request", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onNavigationItemSelected: " + e.getMessage() );
-
                     }
 
                     break;
@@ -1472,6 +1689,7 @@ import static java.security.AccessController.getContext;
         //add to database
         @Override
         public void onButtonClicked(String t, String d, String type, String spaces) {
+            mMap.clear();
             String input = "Marker title added as " + t;
             Snackbar.make(findViewById(android.R.id.content), input, Snackbar.LENGTH_LONG).show();
 //            mMarkersList.add(t);
@@ -1525,7 +1743,7 @@ import static java.security.AccessController.getContext;
         public void onButtonClickedEdit(String t, String d, String type, String spaces, String id, GeoPoint point) {
             CollectionReference locationRef = mDb.collection(getString(R.string.collection_users)).document(FirebaseAuth.getInstance().getUid())
                     .collection(getString(R.string.collection_parking_details));
-
+            mMap.clear();
             mParkingDetails = new ParkingDetails();
             mParkingDetails.setDescription(d);
             mParkingDetails.setTitle(t);
@@ -1549,7 +1767,7 @@ import static java.security.AccessController.getContext;
 
 
             updateMapWithDatabaseMarker();
-            mMap.clear();
+
         }
 
         // save a particular marker's long lat with the type, title and description
@@ -1557,9 +1775,9 @@ import static java.security.AccessController.getContext;
         // index the five items as one key e.g. Array[0] = {14, -122, Free Parking, FCSIT Student Parking, For students only}
 
         public void updateMapWithFilteredMarkers(){
-
-            setUpClusterer();
             mMap.clear();
+            setUpClusterer();
+
            /* for(int i=0; i<mFilteredList.size(); i++){
                 ParkingDetails p = (ParkingDetails) mFilteredList.get(i);
 
@@ -1570,6 +1788,7 @@ import static java.security.AccessController.getContext;
         }
 
         public void updateMapWithDatabaseMarker(){
+            mMap.clear();
             mMarkersList.clear();
             mSearchableMarkers.clear();
 
@@ -1671,7 +1890,7 @@ import static java.security.AccessController.getContext;
                 marker.setVisible(false);
                 mMarkersList.remove(mMarkersList.size() - 1);
                 Log.d(TAG, "onDismiss: clik");
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(camLat,camLong), DEFAULT_ZOOM));
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(camLat,camLong), DEFAULT_ZOOM));
             }
         }
 

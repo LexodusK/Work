@@ -34,12 +34,7 @@
             tools:context=".MapsActivity"
             android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/imageForShaded"
-            android:id="@+id/textForImage"
-            android:text="TEST"/>
+
 
 
         <ImageView
@@ -63,6 +58,15 @@
             android:id="@+id/textForseekbar"
             android:text="6 am"
             android:textSize="30sp"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toEndOf="@+id/textForseekbar"
+            android:layout_above="@+id/seekbar"
+            android:layout_marginStart="30dp"
+            android:id="@+id/imageForCancelShadedParking"
+            android:src="@drawable/ic_cancel"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -147,7 +151,7 @@
             android:layout_below="@+id/relLayout1"
             android:src="@drawable/ic_map" />
 
-        <ImageView
+      <!--  <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_below="@id/place_picker"
@@ -155,7 +159,7 @@
             android:layout_marginTop="10dp"
             android:scaleType="centerCrop"
             android:id="@+id/place_info"
-            android:src="@drawable/ic_info"/>
+            android:src="@drawable/ic_info"/>-->
 
         <!--<Button-->
             <!--android:layout_width="wrap_content"-->

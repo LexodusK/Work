@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:18.0.1'
     implementation 'com.google.firebase:firebase-storage:16.0.5'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.firebase:firebase-client-android:2.3.1'
     //Google services
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     //Google locations
@@ -48,6 +49,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.tensorflow:tensorflow-android:1.8.0"
     implementation "com.github.chrisbanes:PhotoView:1.2.6"
+    implementation "com.github.bumptech.glide:glide:3.7.0"
     //    implementation 'com.github.Lexodusk:spinner'
     //        implementation project(':spinerdialog')
 }
