@@ -1,4 +1,3 @@
-
 package com.example.fyp;
 
 import android.Manifest;
@@ -14,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Image;
 import android.net.Uri;
@@ -87,6 +87,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -111,6 +112,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import com.example.fyp.Images;
 
 
@@ -121,30 +123,33 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 import static java.security.AccessController.getContext;
 
 
-    public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
-            GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
-            AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
-            parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener,
-            EditParkingInfo.BottomSheetListener, ClusterManager.OnClusterInfoWindowClickListener<MarkerCluster>,
-            ClusterManager.OnClusterItemInfoWindowClickListener<MarkerCluster>//, AddParkingInfo.OnDataPass
-    {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
+        GoogleApiClient.OnConnectionFailedListener, NavigationView.OnNavigationItemSelectedListener,
+        AddCancelParkingBottomSheet.BottomSheetListener, AddParkingInfo.BottomSheetListener,
+        parkinginfo_with_edit_delete.BottomSheetListener, parkinginfo_without_editdelete.BottomSheetListener,
+        EditParkingInfo.BottomSheetListener, ClusterManager.OnClusterInfoWindowClickListener<MarkerCluster>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<MarkerCluster>//, AddParkingInfo.OnDataPass
+{
 
-        @Override
-        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-        }
+    }
 
-                @Override
-        public void onMapReady(GoogleMap googleMap) {
-            Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "onMapReady: Map is ready");
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onMapReady: Map is ready");
 
 
-            mMap = googleMap;
-            updateMapWithDatabaseMarker();
+        mMap = googleMap;
+        updateMapWithDatabaseMarker();
+
 
 //            urlpaam6 =  "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotB%2Fpbam6.png?alt=media&token=b3816b07-120a-462d-bc04-ae3b7723c32e";
 //            urlpapm12 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotB%2Fpbpm12.png?alt=media&token=56d8e9d4-066f-4b5b-9a2f-993ec78459b1";
+
+
 
 
 
@@ -172,8 +177,7 @@ import static java.security.AccessController.getContext;
         private static final String TAG = "MainActivity";
         private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
         private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-        private double camLat;
-        private double camLong;
+        private FusedLocationProviderClient fusedLocationClient;
         private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
         private static final int ERROR_DIALOG_REQUEST = 9001;
         private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
@@ -230,19 +234,19 @@ import static java.security.AccessController.getContext;
         private String noParking = "No Parking";
         protected MarkerCluster clickedClusterItem;
 
-        private String urlpaam6;  private String urlpbam6;  private String urlpcam6;
-        private String urlpaam7;  private String urlpbam7;  private String urlpcam7;
-        private String urlpaam8;  private String urlpbam8;  private String urlpcam8;
-        private String urlpaam9;  private String urlpbam9;  private String urlpcam9;
-        private String urlpaam10; private String urlpbam10; private String urlpcam10;
-        private String urlpaam11; private String urlpbam11; private String urlpcam11;
-        private String urlpapm12; private String urlpbpm12; private String urlpcpm12;
-        private String urlpapm1;  private String urlpbpm1;  private String urlpcpm1;
-        private String urlpapm2;  private String urlpbpm2;  private String urlpcpm2;
-        private String urlpapm3;  private String urlpbpm3;  private String urlpcpm3;
-        private String urlpapm4;  private String urlpbpm4;  private String urlpcpm4;
-        private String urlpapm5;  private String urlpbpm5;  private String urlpcpm5;
-        private String urlpapm6;  private String urlpbpm6;  private String urlpcpm6;
+        private String urlfitam6;  private String urlpaam6;  private String urlpbam6;  private String urlpcam6;
+        private String urlfitam7;  private String urlpaam7;  private String urlpbam7;  private String urlpcam7;
+        private String urlfitam8;  private String urlpaam8;  private String urlpbam8;  private String urlpcam8;
+        private String urlfitam9;  private String urlpaam9;  private String urlpbam9;  private String urlpcam9;
+        private String urlfitam10; private String urlpaam10; private String urlpbam10; private String urlpcam10;
+        private String urlfitam11; private String urlpaam11; private String urlpbam11; private String urlpcam11;
+        private String urlfitpm12;  private String urlpapm12; private String urlpbpm12; private String urlpcpm12;
+        private String urlfitpm1;  private String urlpapm1;  private String urlpbpm1;  private String urlpcpm1;
+        private String urlfitpm2;  private String urlpapm2;  private String urlpbpm2;  private String urlpcpm2;
+        private String urlfitpm3;  private String urlpapm3;  private String urlpbpm3;  private String urlpcpm3;
+        private String urlfitpm4;  private String urlpapm4;  private String urlpbpm4;  private String urlpcpm4;
+        private String urlfitpm5;  private String urlpapm5;  private String urlpbpm5;  private String urlpcpm5;
+        private String urlfitpm6;  private String urlpapm6;  private String urlpbpm6;  private String urlpcpm6;
 
 
         SpinnerDialog spinnerDialog;
@@ -291,21 +295,22 @@ import static java.security.AccessController.getContext;
 
             View checkbox = (View) navView.getMenu();
             mShaded = findViewById(R.id.shadedcheck);
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
             Images imageURL = new Images();
-            urlpaam6 = imageURL.getUrlpaam6();    urlpbam6 = imageURL.getUrlpbam6();    urlpcam6 = imageURL.getUrlpcam6();
-            urlpaam7 = imageURL.getUrlpaam7();    urlpbam7 = imageURL.getUrlpbam7();    urlpcam7 = imageURL.getUrlpcam7();
-            urlpaam8 = imageURL.getUrlpaam8();    urlpbam8 = imageURL.getUrlpbam8();    urlpcam8 = imageURL.getUrlpcam8();
-            urlpaam9 = imageURL.getUrlpaam9();    urlpbam9 = imageURL.getUrlpbam9();    urlpcam9 = imageURL.getUrlpcam9();
-            urlpaam10 = imageURL.getUrlpaam10();  urlpbam10 = imageURL.getUrlpbam10();  urlpcam10 = imageURL.getUrlpcam10();
-            urlpaam11 = imageURL.getUrlpaam11();  urlpbam11 = imageURL.getUrlpbam11();  urlpcam11 = imageURL.getUrlpcam11();
-            urlpapm12 = imageURL.getUrlpapm12();  urlpbpm12 = imageURL.getUrlpbpm12();  urlpcpm12 = imageURL.getUrlpcpm12();
-            urlpapm1 = imageURL.getUrlpapm1();    urlpbpm1 = imageURL.getUrlpbpm1();    urlpcpm1 = imageURL.getUrlpcpm1();
-            urlpapm2 = imageURL.getUrlpapm2();    urlpbpm2 = imageURL.getUrlpbpm2();    urlpcpm2 = imageURL.getUrlpcpm2();
-            urlpapm3 = imageURL.getUrlpapm3();    urlpbpm3 = imageURL.getUrlpbpm3();    urlpcpm3 = imageURL.getUrlpcpm3();
-            urlpapm4 = imageURL.getUrlpapm4();    urlpbpm4 = imageURL.getUrlpbpm4();    urlpcpm4 = imageURL.getUrlpcpm4();
-            urlpapm5 = imageURL.getUrlpapm5();    urlpbpm5 = imageURL.getUrlpbpm5();    urlpcpm5 = imageURL.getUrlpcpm5();
-            urlpapm6 = imageURL.getUrlpapm6();    urlpbpm6 = imageURL.getUrlpbpm6();    urlpcpm6 = imageURL.getUrlpcpm6();
+            urlfitam6 = imageURL.getUrlFITam6();    urlpaam6 = imageURL.getUrlpaam6();    urlpbam6 = imageURL.getUrlpbam6();    urlpcam6 = imageURL.getUrlpcam6();
+            urlfitam7 = imageURL.getUrlFITam7();    urlpaam7 = imageURL.getUrlpaam7();    urlpbam7 = imageURL.getUrlpbam7();    urlpcam7 = imageURL.getUrlpcam7();
+            urlfitam8 = imageURL.getUrlFITam8();    urlpaam8 = imageURL.getUrlpaam8();    urlpbam8 = imageURL.getUrlpbam8();    urlpcam8 = imageURL.getUrlpcam8();
+            urlfitam9 = imageURL.getUrlFITam9();    urlpaam9 = imageURL.getUrlpaam9();    urlpbam9 = imageURL.getUrlpbam9();    urlpcam9 = imageURL.getUrlpcam9();
+            urlfitam10 = imageURL.getUrlFITam10();  urlpaam10 = imageURL.getUrlpaam10();  urlpbam10 = imageURL.getUrlpbam10();  urlpcam10 = imageURL.getUrlpcam10();
+            urlfitam11 = imageURL.getUrlFITam11();  urlpaam11 = imageURL.getUrlpaam11();  urlpbam11 = imageURL.getUrlpbam11();  urlpcam11 = imageURL.getUrlpcam11();
+            urlfitpm12 = imageURL.getUrlFITpm12();  urlpapm12 = imageURL.getUrlpapm12();  urlpbpm12 = imageURL.getUrlpbpm12();  urlpcpm12 = imageURL.getUrlpcpm12();
+            urlfitpm1 = imageURL.getUrlFITpm1();    urlpapm1 = imageURL.getUrlpapm1();    urlpbpm1 = imageURL.getUrlpbpm1();    urlpcpm1 = imageURL.getUrlpcpm1();
+            urlfitpm2 = imageURL.getUrlFITpm2();    urlpapm2 = imageURL.getUrlpapm2();    urlpbpm2 = imageURL.getUrlpbpm2();    urlpcpm2 = imageURL.getUrlpcpm2();
+            urlfitpm3 = imageURL.getUrlFITpm3();    urlpapm3 = imageURL.getUrlpapm3();    urlpbpm3 = imageURL.getUrlpbpm3();    urlpcpm3 = imageURL.getUrlpcpm3();
+            urlfitpm4 = imageURL.getUrlFITpm4();    urlpapm4 = imageURL.getUrlpapm4();    urlpbpm4 = imageURL.getUrlpbpm4();    urlpcpm4 = imageURL.getUrlpcpm4();
+            urlfitpm5 = imageURL.getUrlFITpm5();    urlpapm5 = imageURL.getUrlpapm5();    urlpbpm5 = imageURL.getUrlpbpm5();    urlpcpm5 = imageURL.getUrlpcpm5();
+            urlfitpm6 = imageURL.getUrlFITpm6();    urlpapm6 = imageURL.getUrlpapm6();    urlpbpm6 = imageURL.getUrlpbpm6();    urlpcpm6 = imageURL.getUrlpcpm6();
 
             spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
             spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
@@ -514,6 +519,109 @@ import static java.security.AccessController.getContext;
           });
         }
 
+    private void findCarLocation (){
+            fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location!=null){
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
+                    }
+                }
+            });
+    }
+
+       /* private void findCarLocation (){
+
+
+    LocationManager locationManager;
+    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+        return;
+    }
+
+    if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+        Log.d(TAG, "onMapReady: called this network provider method");
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                double lat = location.getLatitude();
+                double longit = location.getLongitude();
+                LatLng latLng = new LatLng(lat, longit);
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                try {
+                    List <Address> addressList = geocoder.getFromLocation(lat, longit, 1);
+//                        String str = addressList.get(0).getLocality();
+//                        str += addressList.get(0).getCountryName();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+    }else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                Log.d(TAG, "onMapReady: called GPS provider method");
+                double lat = location.getLatitude();
+                double longit = location.getLongitude();
+                LatLng latLng = new LatLng(lat, longit);
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                try {
+                    List <Address> addressList = geocoder.getFromLocation(lat, longit, 1);
+//                        String str = addressList.get(0).getLocality();
+//                        str += addressList.get(0).getCountryName();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+    }
+}*/
+
 
         private void clickShadedButton (){
             mShadedButton.setOnClickListener(new View.OnClickListener() {
@@ -523,6 +631,7 @@ import static java.security.AccessController.getContext;
 
 
                     mShadedParkingLotsZone.clear();
+                    mShadedParkingLotsZone.add("FIT Parking");
                     mShadedParkingLotsZone.add("Parking Lot Zone A ( FSTS, FIT, FENG )");
                     mShadedParkingLotsZone.add("Parking Lot Zone B ( DeTAR, Chancellory, FLC )");
                     mShadedParkingLotsZone.add("Parking Lot Zone C ( FSS, FACA, FCSHD, FMHS, CAIS )");
@@ -544,7 +653,7 @@ import static java.security.AccessController.getContext;
 
                                 mSeekBar.setProgress(0);
 
-                                if (position == 0 || position == 1 || position ==2){
+                                if (position == 0 || position == 1 || position ==2 || position == 3){
                                     if (mShadedImage.getVisibility() == view.INVISIBLE){
                                         mShadedImage.setVisibility(view.VISIBLE);
                                         mSeekBar.setVisibility(view.VISIBLE);
@@ -562,11 +671,13 @@ import static java.security.AccessController.getContext;
                                                 case 0:
                                                     progress = 6;
                                                     mTextSeekBar.setText(" " + progress + " am");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitam6).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpaam6).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbam6).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbam6).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcam6).into(mShadedImage);
                                                     }
 
@@ -574,132 +685,156 @@ import static java.security.AccessController.getContext;
                                                 case 1:
                                                     progress = 7;
                                                     mTextSeekBar.setText(" " + progress + " am");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitam7).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpaam7).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbam7).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbam7).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcam7).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 2:
                                                     progress = 8;
                                                     mTextSeekBar.setText(" " + progress + " am");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitam8).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpaam8).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbam8).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbam8).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcam8).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 3:
                                                     progress = 9;
                                                     mTextSeekBar.setText(" " + progress + " am");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitam9).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpaam9).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbam9).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbam9).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcam9).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 4:
                                                     progress = 10;
                                                     mTextSeekBar.setText(" " + progress + " am");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitam10).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpaam10).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbam10).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbam10).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcam10).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 5:
                                                     progress = 11;
                                                     mTextSeekBar.setText(" " + progress + " am");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitam11).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpaam11).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbam11).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbam11).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcam11).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 6:
                                                     progress = 12;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm12).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm12).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm12).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm12).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm12).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 7:
                                                     progress = 1;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm1).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm1).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm1).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm1).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm1).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 8:
                                                     progress = 2;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm2).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm2).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm2).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm2).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm2).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 9:
                                                     progress = 3;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm3).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm3).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm3).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm3).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm3).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 10:
                                                     progress = 4;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm4).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm4).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm4).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm4).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm4).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 11:
                                                     progress = 5;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm5).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm5).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm5).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm5).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm5).into(mShadedImage);
                                                     }
                                                     break;
                                                 case 12:
                                                     progress = 6;
                                                     mTextSeekBar.setText(" " + progress + " pm");
-                                                    if (position==0){
+                                                    if (position == 0){
+                                                        Glide.with(getApplicationContext()).load(urlfitpm6).into(mShadedImage);
+                                                    }else if (position==1){
                                                         Glide.with(getApplicationContext()).load(urlpapm6).into(mShadedImage);
-                                                    }else if (position == 1){
-                                                        Glide.with(getApplicationContext()).load(urlpbpm6).into(mShadedImage);
                                                     }else if (position == 2){
+                                                        Glide.with(getApplicationContext()).load(urlpbpm6).into(mShadedImage);
+                                                    }else if (position == 3){
                                                         Glide.with(getApplicationContext()).load(urlpcpm6).into(mShadedImage);
                                                     }
                                                     break;
@@ -1367,9 +1502,6 @@ import static java.security.AccessController.getContext;
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.latitude, point.longitude), 20f));
 //                    moveCamera(new LatLng(point.latitude, point.longitude), 20f );
 //
-                     camLat = point.latitude;
-                     camLong = point.longitude;
-
 
                     onmaplongclickedpoint = new GeoPoint(point.latitude, point.longitude);
 //
@@ -1659,6 +1791,7 @@ import static java.security.AccessController.getContext;
 
                 case R.id.findcar:
                     Toast.makeText(this, "find car", Toast.LENGTH_SHORT).show();
+                    findCarLocation();
                     break;
 
                 case R.id.register:

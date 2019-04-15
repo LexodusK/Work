@@ -4,6 +4,20 @@ package com.example.fyp;
 
 public class Images {
 
+    String urlFITam6 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITam6.png?alt=media&token=71b0575c-914d-4b09-b431-4bb8ce184aa5";
+    String urlFITam7 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITam7.png?alt=media&token=63ef20a5-9de7-4bc7-bdbe-3fba2ba2ad3f";
+    String urlFITam8 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITam8.png?alt=media&token=020022be-4272-4cc6-bd9e-d384f62587d9";
+    String urlFITam9 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITam9.png?alt=media&token=01bb0ff5-b1a5-4713-a5bb-b3cb6f027e29";
+    String urlFITam10 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITam10.png?alt=media&token=84210427-78ed-4822-ab54-f0dda2670a13";
+    String urlFITam11 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITam11.png?alt=media&token=ae08d9b0-5789-4b61-b4a4-41dfffc5422a";
+    String urlFITpm12 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm12.png?alt=media&token=0413f20d-7d01-43c7-9afb-e449f6b4ebc1";
+    String urlFITpm1 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm1.png?alt=media&token=832e0af2-9038-41c8-b1e9-0585c4d6160f";
+    String urlFITpm2 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm2.png?alt=media&token=ecaa637a-dd30-44f9-8b02-9f5f6b022c95";
+    String urlFITpm3 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm3.png?alt=media&token=381bd21c-2731-48d4-9248-0608da8064f2";
+    String urlFITpm4 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm4.png?alt=media&token=0b2d9b91-d469-4025-980b-88c01f14b620";
+    String urlFITpm5 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm5.png?alt=media&token=d338d8c3-6152-4a06-8547-296e541c043a";
+    String urlFITpm6 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/FIT%2FFITpm6.png?alt=media&token=590bf4b8-1027-46b0-bc89-b06fbbcb9222";
+
     String urlpaam6 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotA%2Fpaam6.png?alt=media&token=4e4544f2-8ad4-44d1-81dd-e4d816ed0f8c";
     String urlpaam7 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotA%2Fpaam7.png?alt=media&token=005ce444-b1c1-4bf9-9b91-fc505fa47199";
     String urlpaam8 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotA%2Fpaam8.png?alt=media&token=9135f281-5d68-4d3d-8fb8-18a802cbabfd";
@@ -48,6 +62,58 @@ public class Images {
 
     public void Images(){
 
+    }
+
+    public String getUrlFITam6() {
+        return urlFITam6;
+    }
+
+    public String getUrlFITam7() {
+        return urlFITam7;
+    }
+
+    public String getUrlFITam8() {
+        return urlFITam8;
+    }
+
+    public String getUrlFITam9() {
+        return urlFITam9;
+    }
+
+    public String getUrlFITam10() {
+        return urlFITam10;
+    }
+
+    public String getUrlFITam11() {
+        return urlFITam11;
+    }
+
+    public String getUrlFITpm12() {
+        return urlFITpm12;
+    }
+
+    public String getUrlFITpm1() {
+        return urlFITpm1;
+    }
+
+    public String getUrlFITpm2() {
+        return urlFITpm2;
+    }
+
+    public String getUrlFITpm3() {
+        return urlFITpm3;
+    }
+
+    public String getUrlFITpm4() {
+        return urlFITpm4;
+    }
+
+    public String getUrlFITpm5() {
+        return urlFITpm5;
+    }
+
+    public String getUrlFITpm6() {
+        return urlFITpm6;
     }
 
     public String getUrlpaam6() {
