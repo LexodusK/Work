@@ -24,7 +24,10 @@
             android:layout_centerInParent="true"
             android:layout_alignParentBottom="true"
             android:text="Click here for shaded"
-            android:id="@+id/buttonForShaded"/>
+            android:textColor="#000"
+            android:id="@+id/buttonForShaded"
+            android:background="@drawable/trans_button"
+            />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -200,6 +203,7 @@
         android:id="@+id/nav_view"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"/>
+
 
   <!--  <TextView
         android:layout_width="wrap_content"

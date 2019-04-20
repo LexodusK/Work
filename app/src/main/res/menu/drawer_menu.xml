@@ -11,13 +11,13 @@
 
  <menu android:id="@+id/checkboxmenu">
 
-     <item
+    <!-- <item
          android:id="@+id/shadedcheck"
          app:actionLayout="@layout/widget_check"
          android:title="@string/Shaded"
          tools:ignore="MenuTitle"
          android:checkable="true"
-         android:icon="@drawable/ic_shaded"/>
+         android:icon="@drawable/ic_shaded"/>-->
      <item
          android:id="@+id/freecheck"
          app:actionLayout="@layout/widget_checkfree"
@@ -106,7 +106,7 @@
 
     <item android:id="@+id/signout"
         android:icon="@drawable/ic_signup"
-        android:title="Sign Out"/>
+        android:title="Logout"/>
 </menu>
     </item>
 

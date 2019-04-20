@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +35,7 @@ public class Register extends AppCompatActivity implements
     private EditText mEmail, mPassword, mConfirmPassword;
     private ProgressBar mProgressBar;
 
+
     //vars
     private FirebaseFirestore mDb;
 
@@ -48,6 +50,7 @@ public class Register extends AppCompatActivity implements
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         findViewById(R.id.btn_register).setOnClickListener(this);
+        findViewById(R.id.toLoginPage).setOnClickListener(this);
 
         mDb = FirebaseFirestore.getInstance();
 
@@ -148,6 +151,14 @@ public class Register extends AppCompatActivity implements
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+
+            case R.id.toLoginPage:{
+                Log.d(TAG, "onClick: clickedasd");
+                Intent intent = new Intent(Register.this, Login.class);
+                startActivity(intent);
+                break;
+            }
+
             case R.id.btn_register:{
                 Log.d(TAG, "onClick: attempting to register.");
 
@@ -170,6 +181,8 @@ public class Register extends AppCompatActivity implements
                 }
                 break;
             }
+
+
         }
     }
 }

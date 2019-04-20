@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by Md Farhan Raja on 2/23/2017.
@@ -84,7 +87,7 @@ public class SpinnerDialog {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 TextView t = (TextView) view.findViewById(R.id.text1);
 //                 for (int j = 0; j < items.size(); j++) {
 //                     if (t.getText().toString().equalsIgnoreCase(items.get(j).toString())) {
@@ -92,9 +95,16 @@ public class SpinnerDialog {
 //                     }
 //                 }
 
-                String s = listView.getItemAtPosition(i).toString();
-                pos = i;                
-                onSpinerItemClick.onClick(s, pos);
+                String s = listView.getItemAtPosition(position).toString();
+//                Log.d(TAG, "onItemClick: " + position + "and " + s);
+//                onSpinerItemClick.onClick(s, position);
+                for (int j = 0; j < items.size(); j++) {
+                    if (t.getText().toString().equalsIgnoreCase(items.get(j).toString())) {
+                        listView.getItemAtPosition(position).toString();
+                        pos = j;
+                    }
+                }
+                onSpinerItemClick.onClick(t.getText().toString(), pos);
                 closeSpinerDialog();
             }
         });

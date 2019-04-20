@@ -110,7 +110,7 @@
             android:id="@+id/button_editparkinglotinfo"
             android:layout_marginStart="50dp"
             android:gravity="center"
-            android:background="#00A86B"/>
+            android:background="@drawable/greenbutton"/>
 
         <ImageView
             android:layout_width="32dp"

@@ -43,6 +43,9 @@ public class parkinginfo_without_editdelete extends BottomSheetDialogFragment  {
         mParkingDetails = (ParkingDetails) getArguments().getSerializable("key");
 
         //set the details into the bottomsheetlistener textview
+        if (mTexttitle==null){
+            mTexttitle.setText(R.string.location);
+        }
         mTexttitle.setText(mParkingDetails.getTitle());
         mTextDescription.setText(mParkingDetails.getDescription());
         mTextPSpaces.setText(mParkingDetails.getNumberofParkingspots());

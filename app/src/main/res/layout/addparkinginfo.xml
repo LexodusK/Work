@@ -221,6 +221,7 @@
           android:layout_width="200dp"
           android:layout_height="35dp"
           android:text="Add"
+          android:background="@drawable/bluebutton"
           android:id="@+id/button_confirmAddParkingLot"
           android:gravity="center"
           android:layout_marginStart="50dp"/>

@@ -34,7 +34,10 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter
             //if title doesnt equal null, then title set textview to title
         if (!title.equals("")){
             tvTitle.setText(title);
+        }else{
+            tvTitle.setText("");
         }
+
 
         String snippet = marker.getSnippet();
         TextView tvSnippet = (TextView) view.findViewById(R.id.snippet);

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -120,6 +121,7 @@ import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+import static android.graphics.Color.BLACK;
 import static java.security.AccessController.getContext;
 
 
@@ -150,108 +152,103 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            urlpapm12 = "https://firebasestorage.googleapis.com/v0/b/fypproject.appspot.com/o/ParkingLotB%2Fpbpm12.png?alt=media&token=56d8e9d4-066f-4b5b-9a2f-993ec78459b1";
 
 
-
-
-
-
-            //if permission is granted, then proceed
-            if (mLocationPermissionGranted) {
+        //if permission is granted, then proceed
+        if (mLocationPermissionGranted) {
 //            initMap();
-                getDeviceLocation();
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED)
-                {
-                    return;
-                }
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-
-                init();
-
+            getDeviceLocation();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
             }
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+            init();
 
         }
 
-        //global values
-        private static final String TAG = "MainActivity";
-        private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-        private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-        private FusedLocationProviderClient fusedLocationClient;
-        private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-        private static final int ERROR_DIALOG_REQUEST = 9001;
-        private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
-        private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
-        private static final float DEFAULT_ZOOM = 15f;
-        private static final int PLACE_PICKER_REQUEST = 1;
-        private static GeoPoint onmaplongclickedpoint;
-        private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
-                //encompass the entire world
-                new LatLng(-40,-168), new LatLng(71,136));
+    }
 
-        //widgets
-        private AutoCompleteTextView mSearchText;
-        private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage, mCancelShadedParking;
-        private Button mShadedButton;
-        private SeekBar mSeekBar;
-        private TextView mTextSeekBar;
+    //global values
+    private static final String TAG = "MainActivity";
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private FusedLocationProviderClient fusedLocationClient;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final int ERROR_DIALOG_REQUEST = 9001;
+    private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
+    private static final float DEFAULT_ZOOM = 15f;
+    private static final int PLACE_PICKER_REQUEST = 1;
+    private static GeoPoint onmaplongclickedpoint;
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            //encompass the entire world
+            new LatLng(-40, -168), new LatLng(71, 136));
 
-        //vars
-        private boolean mLocationPermissionGranted = false;
-        private GoogleMap mMap;
-        private FusedLocationProviderClient mFusedLocationProviderClient;
-        private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
-        private GoogleApiClient mGoogleApiClient;
-        private GeoDataClient mGeoDataClient;
-        private PlaceDetectionClient mPlaceDetectionClient;
-        private PlaceInfo mPlace;
-        private Marker mMarker;
-        private DrawerLayout drawer;
-        private FirebaseFirestore mDb;
-        private UserLocation mUserLocation;
-        private ParkingDetails mParkingDetails;
-        private FloatingMarkerTitlesOverlay floatingMarkersOverlay;
-        private FirebaseAuth.AuthStateListener mAuthListener;
-        private TextInputLayout textInputTitle;
-        private TextInputLayout textInputDescription;
-        private TextView mTextView;
-//        private TextView mtesttext;
-        private String mtesttextemailstring;
-        private TextView emaildisp;
-        //        private TextView emaildisplay;
-        private ArrayList mMarkersList;
-        private ArrayList mFilteredList;
-        private ArrayList mSearchableMarkers;
-        private ArrayList mShadedParkingLotsZone;
-        private CheckBox mShaded;
-        private ClusterManager<MarkerCluster> mClusterManager;
-        private String shadedGlobal = "Shaded Parking lot";
-        private String freeGlobal = "Free Parking lot";
-        private String paidGlobal = "Paid Parking lot";
-        private String mspGlobal = "Multistorey Parking lot";
-        private String disabledGlobal = "Disabled Parking";
-        private String evGlobal = "Electric vehicle lot";
-        private String noParking = "No Parking";
-        protected MarkerCluster clickedClusterItem;
+    //widgets
+    private AutoCompleteTextView mSearchText;
+    private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage, mCancelShadedParking;
+    private Button mShadedButton;
+    private SeekBar mSeekBar;
+    private TextView mTextSeekBar;
 
-        private String urlfitam6;  private String urlpaam6;  private String urlpbam6;  private String urlpcam6;
-        private String urlfitam7;  private String urlpaam7;  private String urlpbam7;  private String urlpcam7;
-        private String urlfitam8;  private String urlpaam8;  private String urlpbam8;  private String urlpcam8;
-        private String urlfitam9;  private String urlpaam9;  private String urlpbam9;  private String urlpcam9;
-        private String urlfitam10; private String urlpaam10; private String urlpbam10; private String urlpcam10;
-        private String urlfitam11; private String urlpaam11; private String urlpbam11; private String urlpcam11;
-        private String urlfitpm12;  private String urlpapm12; private String urlpbpm12; private String urlpcpm12;
-        private String urlfitpm1;  private String urlpapm1;  private String urlpbpm1;  private String urlpcpm1;
-        private String urlfitpm2;  private String urlpapm2;  private String urlpbpm2;  private String urlpcpm2;
-        private String urlfitpm3;  private String urlpapm3;  private String urlpbpm3;  private String urlpcpm3;
-        private String urlfitpm4;  private String urlpapm4;  private String urlpbpm4;  private String urlpcpm4;
-        private String urlfitpm5;  private String urlpapm5;  private String urlpbpm5;  private String urlpcpm5;
-        private String urlfitpm6;  private String urlpapm6;  private String urlpbpm6;  private String urlpcpm6;
+    //vars
+    private boolean mLocationPermissionGranted = false;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+    private GoogleApiClient mGoogleApiClient;
+    private GeoDataClient mGeoDataClient;
+    private PlaceDetectionClient mPlaceDetectionClient;
+    private PlaceInfo mPlace;
+    private Marker mMarker;
+    private DrawerLayout drawer;
+    private FirebaseFirestore mDb;
+    private UserLocation mUserLocation;
+    private ParkingDetails mParkingDetails;
+    private FloatingMarkerTitlesOverlay floatingMarkersOverlay;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private TextInputLayout textInputTitle;
+    private TextInputLayout textInputDescription;
+    private TextView mTextView;
+    //        private TextView mtesttext;
+    private String mtesttextemailstring;
+    private TextView emaildisp;
+    //        private TextView emaildisplay;
+    private ArrayList mMarkersList;
+    private ArrayList mFilteredList;
+    private ArrayList mSearchableMarkers;
+    private ArrayList mShadedParkingLotsZone;
+    private CheckBox mShaded;
+    private ClusterManager<MarkerCluster> mClusterManager;
+    private String shadedGlobal = "Shaded Parking lot";
+    private String freeGlobal = "Free Parking lot";
+    private String paidGlobal = "Paid Parking lot";
+    private String mspGlobal = "Multistorey Parking lot";
+    private String disabledGlobal = "Disabled Parking";
+    private String evGlobal = "Electric vehicle lot";
+    private String noParking = "No Parking";
+    protected MarkerCluster clickedClusterItem;
+
+    private String urlfitam6;    private String urlpaam6;    private String urlpbam6;    private String urlpcam6;
+    private String urlfitam7;    private String urlpaam7;    private String urlpbam7;    private String urlpcam7;
+    private String urlfitam8;    private String urlpaam8;    private String urlpbam8;    private String urlpcam8;
+    private String urlfitam9;    private String urlpaam9;    private String urlpbam9;    private String urlpcam9;
+    private String urlfitam10;   private String urlpaam10;   private String urlpbam10;   private String urlpcam10;
+    private String urlfitam11;   private String urlpaam11;   private String urlpbam11;   private String urlpcam11;
+    private String urlfitpm12;   private String urlpapm12;   private String urlpbpm12;   private String urlpcpm12;
+    private String urlfitpm1;    private String urlpapm1;    private String urlpbpm1;    private String urlpcpm1;
+    private String urlfitpm2;    private String urlpapm2;    private String urlpbpm2;    private String urlpcpm2;
+    private String urlfitpm3;    private String urlpapm3;    private String urlpbpm3;    private String urlpcpm3;
+    private String urlfitpm4;    private String urlpapm4;    private String urlpbpm4;    private String urlpcpm4;
+    private String urlfitpm5;    private String urlpapm5;    private String urlpbpm5;    private String urlpcpm5;
+    private String urlfitpm6;    private String urlpapm6;    private String urlpbpm6;    private String urlpcpm6;
 
 
-        SpinnerDialog spinnerDialog;
-        SpinnerDialog spinnerForShaded;
-        Images mImage;
+    SpinnerDialog spinnerDialog;
+    SpinnerDialog spinnerForShaded;
+    Images mImage;
 
 //        String[] menutitles;
 //        TypedArray menuIcons;
@@ -267,267 +264,279 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 
 
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_map);
-            mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
-            mRecenter = (ImageView) findViewById(R.id.ic_recenter);
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
+        mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
+        mRecenter = (ImageView) findViewById(R.id.ic_recenter);
 //            mInfo = (ImageView) findViewById(R.id.place_info);
-            mPlacePicker = (ImageView) findViewById(R.id.place_picker);
-            mShadedButton = (Button) findViewById(R.id.buttonForShaded);
-            mShadedImage = (ImageView) findViewById(R.id.imageForShaded);
-            mTextSeekBar = (TextView) findViewById(R.id.textForseekbar);
-            mCancelShadedParking = (ImageView) findViewById(R.id.imageForCancelShadedParking);
-            mSeekBar = (SeekBar) findViewById(R.id.seekbar);
-            mDb = FirebaseFirestore.getInstance();
-            textInputTitle = findViewById(R.id.Title);
-            textInputDescription = findViewById(R.id.Description);
-            mSatelliteView = (ImageView) findViewById(R.id.ic_terrain);
-            mSortMarker = (ImageView)findViewById(R.id.ic_sortmarker);
-            NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-            View headerView = navView.getHeaderView(0);
-            emaildisp  = (TextView) headerView.findViewById(R.id.varying_email);
-            mMarkersList = new ArrayList();
-            mFilteredList = new ArrayList();
-            mSearchableMarkers = new ArrayList();
-            mShadedParkingLotsZone = new ArrayList();
+        mPlacePicker = (ImageView) findViewById(R.id.place_picker);
+        mShadedButton = (Button) findViewById(R.id.buttonForShaded);
+        mShadedImage = (ImageView) findViewById(R.id.imageForShaded);
+        mTextSeekBar = (TextView) findViewById(R.id.textForseekbar);
+        mCancelShadedParking = (ImageView) findViewById(R.id.imageForCancelShadedParking);
+        mSeekBar = (SeekBar) findViewById(R.id.seekbar);
+        mDb = FirebaseFirestore.getInstance();
+        textInputTitle = findViewById(R.id.Title);
+        textInputDescription = findViewById(R.id.Description);
+        mSatelliteView = (ImageView) findViewById(R.id.ic_terrain);
+        mSortMarker = (ImageView) findViewById(R.id.ic_sortmarker);
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navView.getHeaderView(0);
+        emaildisp = (TextView) headerView.findViewById(R.id.varying_email);
+        mMarkersList = new ArrayList();
+        mFilteredList = new ArrayList();
+        mSearchableMarkers = new ArrayList();
+        mShadedParkingLotsZone = new ArrayList();
 
-            View checkbox = (View) navView.getMenu();
-            mShaded = findViewById(R.id.shadedcheck);
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+//        View checkbox = (View) navView.getMenu();
+//        mShaded = findViewById(R.id.shadedcheck);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-            Images imageURL = new Images();
-            urlfitam6 = imageURL.getUrlFITam6();    urlpaam6 = imageURL.getUrlpaam6();    urlpbam6 = imageURL.getUrlpbam6();    urlpcam6 = imageURL.getUrlpcam6();
-            urlfitam7 = imageURL.getUrlFITam7();    urlpaam7 = imageURL.getUrlpaam7();    urlpbam7 = imageURL.getUrlpbam7();    urlpcam7 = imageURL.getUrlpcam7();
-            urlfitam8 = imageURL.getUrlFITam8();    urlpaam8 = imageURL.getUrlpaam8();    urlpbam8 = imageURL.getUrlpbam8();    urlpcam8 = imageURL.getUrlpcam8();
-            urlfitam9 = imageURL.getUrlFITam9();    urlpaam9 = imageURL.getUrlpaam9();    urlpbam9 = imageURL.getUrlpbam9();    urlpcam9 = imageURL.getUrlpcam9();
-            urlfitam10 = imageURL.getUrlFITam10();  urlpaam10 = imageURL.getUrlpaam10();  urlpbam10 = imageURL.getUrlpbam10();  urlpcam10 = imageURL.getUrlpcam10();
-            urlfitam11 = imageURL.getUrlFITam11();  urlpaam11 = imageURL.getUrlpaam11();  urlpbam11 = imageURL.getUrlpbam11();  urlpcam11 = imageURL.getUrlpcam11();
-            urlfitpm12 = imageURL.getUrlFITpm12();  urlpapm12 = imageURL.getUrlpapm12();  urlpbpm12 = imageURL.getUrlpbpm12();  urlpcpm12 = imageURL.getUrlpcpm12();
-            urlfitpm1 = imageURL.getUrlFITpm1();    urlpapm1 = imageURL.getUrlpapm1();    urlpbpm1 = imageURL.getUrlpbpm1();    urlpcpm1 = imageURL.getUrlpcpm1();
-            urlfitpm2 = imageURL.getUrlFITpm2();    urlpapm2 = imageURL.getUrlpapm2();    urlpbpm2 = imageURL.getUrlpbpm2();    urlpcpm2 = imageURL.getUrlpcpm2();
-            urlfitpm3 = imageURL.getUrlFITpm3();    urlpapm3 = imageURL.getUrlpapm3();    urlpbpm3 = imageURL.getUrlpbpm3();    urlpcpm3 = imageURL.getUrlpcpm3();
-            urlfitpm4 = imageURL.getUrlFITpm4();    urlpapm4 = imageURL.getUrlpapm4();    urlpbpm4 = imageURL.getUrlpbpm4();    urlpcpm4 = imageURL.getUrlpcpm4();
-            urlfitpm5 = imageURL.getUrlFITpm5();    urlpapm5 = imageURL.getUrlpapm5();    urlpbpm5 = imageURL.getUrlpbpm5();    urlpcpm5 = imageURL.getUrlpcpm5();
-            urlfitpm6 = imageURL.getUrlFITpm6();    urlpapm6 = imageURL.getUrlpapm6();    urlpbpm6 = imageURL.getUrlpbpm6();    urlpcpm6 = imageURL.getUrlpcpm6();
+        Images imageURL = new Images();
+        urlfitam6 = imageURL.getUrlFITam6();        urlpaam6 = imageURL.getUrlpaam6();        urlpbam6 = imageURL.getUrlpbam6();        urlpcam6 = imageURL.getUrlpcam6();
+        urlfitam7 = imageURL.getUrlFITam7();        urlpaam7 = imageURL.getUrlpaam7();        urlpbam7 = imageURL.getUrlpbam7();        urlpcam7 = imageURL.getUrlpcam7();
+        urlfitam8 = imageURL.getUrlFITam8();        urlpaam8 = imageURL.getUrlpaam8();        urlpbam8 = imageURL.getUrlpbam8();        urlpcam8 = imageURL.getUrlpcam8();
+        urlfitam9 = imageURL.getUrlFITam9();        urlpaam9 = imageURL.getUrlpaam9();        urlpbam9 = imageURL.getUrlpbam9();        urlpcam9 = imageURL.getUrlpcam9();
+        urlfitam10 = imageURL.getUrlFITam10();      urlpaam10 = imageURL.getUrlpaam10();      urlpbam10 = imageURL.getUrlpbam10();      urlpcam10 = imageURL.getUrlpcam10();
+        urlfitam11 = imageURL.getUrlFITam11();      urlpaam11 = imageURL.getUrlpaam11();      urlpbam11 = imageURL.getUrlpbam11();      urlpcam11 = imageURL.getUrlpcam11();
+        urlfitpm12 = imageURL.getUrlFITpm12();      urlpapm12 = imageURL.getUrlpapm12();      urlpbpm12 = imageURL.getUrlpbpm12();      urlpcpm12 = imageURL.getUrlpcpm12();
+        urlfitpm1 = imageURL.getUrlFITpm1();        urlpapm1 = imageURL.getUrlpapm1();        urlpbpm1 = imageURL.getUrlpbpm1();        urlpcpm1 = imageURL.getUrlpcpm1();
+        urlfitpm2 = imageURL.getUrlFITpm2();        urlpapm2 = imageURL.getUrlpapm2();        urlpbpm2 = imageURL.getUrlpbpm2();        urlpcpm2 = imageURL.getUrlpcpm2();
+        urlfitpm3 = imageURL.getUrlFITpm3();        urlpapm3 = imageURL.getUrlpapm3();        urlpbpm3 = imageURL.getUrlpbpm3();        urlpcpm3 = imageURL.getUrlpcpm3();
+        urlfitpm4 = imageURL.getUrlFITpm4();        urlpapm4 = imageURL.getUrlpapm4();        urlpbpm4 = imageURL.getUrlpbpm4();        urlpcpm4 = imageURL.getUrlpcpm4();
+        urlfitpm5 = imageURL.getUrlFITpm5();        urlpapm5 = imageURL.getUrlpapm5();        urlpbpm5 = imageURL.getUrlpbpm5();        urlpcpm5 = imageURL.getUrlpcpm5();
+        urlfitpm6 = imageURL.getUrlFITpm6();        urlpapm6 = imageURL.getUrlpapm6();        urlpbpm6 = imageURL.getUrlpbpm6();        urlpcpm6 = imageURL.getUrlpcpm6();
 
-            spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
-            spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
-                @Override
-                public void onClick(String item, int position) {
+        spinnerDialog = new SpinnerDialog(MainActivity.this, mSearchableMarkers, "Find Marker");
+        spinnerDialog.bindOnSpinerListener(new OnSpinerItemClick() {
+            @Override
+            public void onClick(String item, int position) {
 //                    moveCamera();
-                    ParkingDetails p = new ParkingDetails();
-                    Toast.makeText(MainActivity.this, "Selected " + item , Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onClick: " + position);
-                    Log.d(TAG, "onClick: " + mMarkersList.get(position));
-                    p = (ParkingDetails) mMarkersList.get(position);
+                ParkingDetails p = new ParkingDetails();
+                Toast.makeText(MainActivity.this, "Selected " + item, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onClick: " + position);
+                Log.d(TAG, "onClick: " + mMarkersList.get(position));
+                p = (ParkingDetails) mMarkersList.get(position);
 
 //                    moveCamera(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM);
 //                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.latitude, point.longitude), 20f));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), DEFAULT_ZOOM) );
+//                if (p.getGeo_point().getLongitude() && p.getGeo_point().getLatitude()){
+//
+//                }
+                Log.d(TAG, "onClick: " + p.getTitle());
+                if(p.getTitle().equals(item))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude()), 17f));
 
-                }
-            });
-
-            if (FirebaseAuth.getInstance().getUid()==null) {
-                final String text = "Help to improve the service by contributing by signing up!";
-                emaildisp.setText(text);
             }
+        });
 
-            //getLocationPermission();
-            initMap();
+        if (FirebaseAuth.getInstance().getUid() == null) {
+            final String text = "Help to improve the service by contributing by signing up!";
+            emaildisp.setText(text);
+        }
 
-            /* -----------   Hamburger menu ----------------- */
+        //getLocationPermission();
+        initMap();
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-            Log.d(TAG, "onCreate: Created");
+        /* -----------   Hamburger menu ----------------- */
 
-            drawer = findViewById(R.id.drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Log.d(TAG, "onCreate: Created");
+
+        drawer = findViewById(R.id.drawer_layout);
 
 //            NavigationView navigationView = findViewById(R.id.nav_view);
-            navView.setNavigationItemSelectedListener(this);
+        navView.setNavigationItemSelectedListener(this);
 
 
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-            drawer.addDrawerListener(toggle);
-            //take care of rotating hamburger menu
-            toggle.syncState();
+        drawer.addDrawerListener(toggle);
+        //take care of rotating hamburger menu
+        toggle.syncState();
 
 //            NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
-            MenuItem checkboxSP = navView.getMenu().findItem(R.id.shadedcheck);
-            MenuItem checkboxFP = navView.getMenu().findItem(R.id.freecheck);
-            MenuItem checkboxPP = navView.getMenu().findItem(R.id.paidcheck);
-            MenuItem checkboxMSP = navView.getMenu().findItem(R.id.multistoreycheck);
-            MenuItem checkboxDP = navView.getMenu().findItem(R.id.disabledcheck);
-            MenuItem checkboxEVP = navView.getMenu().findItem(R.id.electriccheck);
+//        MenuItem checkboxSP = navView.getMenu().findItem(R.id.shadedcheck);
+        MenuItem checkboxFP = navView.getMenu().findItem(R.id.freecheck);
+        MenuItem checkboxPP = navView.getMenu().findItem(R.id.paidcheck);
+        MenuItem checkboxMSP = navView.getMenu().findItem(R.id.multistoreycheck);
+        MenuItem checkboxDP = navView.getMenu().findItem(R.id.disabledcheck);
+        MenuItem checkboxEVP = navView.getMenu().findItem(R.id.electriccheck);
 
-            CompoundButton checkboxSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxSP);
-            checkboxSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+     /*   CompoundButton checkboxSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxSP);
+        checkboxSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
-                    if (b){
-                        Toast.makeText(MainActivity.this, "Filtered Shaded Areas", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        shadedGlobal = "uncheck";
-                        Toast.makeText(MainActivity.this, "Unfiltered Shaded Areas", Toast.LENGTH_SHORT).show();
-                    }
+                if (b) {
+                    Toast.makeText(MainActivity.this, "Filtered Shaded Areas", Toast.LENGTH_SHORT).show();
+                } else {
+                    shadedGlobal = "uncheck";
+                    Toast.makeText(MainActivity.this, "Unfiltered Shaded Areas", Toast.LENGTH_SHORT).show();
+                }
 //                    filterMarkers();
 
-                }
-            });
+            }
+        });*/
 
-            // FREE
-            CompoundButton checkboxFPView = (CompoundButton) MenuItemCompat.getActionView(checkboxFP);
-            checkboxFPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    mMap.clear();
-                    if (b){
-                        freeGlobal = "Free Parking lot";
-                        Toast.makeText(MainActivity.this, "Filtered Free Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        freeGlobal = "uncheck";
+        // FREE
+        CompoundButton checkboxFPView = (CompoundButton) MenuItemCompat.getActionView(checkboxFP);
+        checkboxFPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mMap.clear();
+                if (b) {
+                    freeGlobal = "Free Parking lot";
+                    Toast.makeText(MainActivity.this, "Filtered Free Parking Lots", Toast.LENGTH_SHORT).show();
+                } else {
+                    freeGlobal = "uncheck";
 //                        Marker marker = (Marker) mMarkersList.
-                        Toast.makeText(MainActivity.this, "Unfiltered Free Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    filterMarkers();
-                    updateMapWithFilteredMarkers();
+                    Toast.makeText(MainActivity.this, "Unfiltered Free Parking Lots", Toast.LENGTH_SHORT).show();
+                }
+                filterMarkers();
+                updateMapWithFilteredMarkers();
+
+            }
+        });
+
+        // PAID
+        CompoundButton checkboxPPView = (CompoundButton) MenuItemCompat.getActionView(checkboxPP);
+        checkboxPPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mMap.clear();
+                if (b) {
+                    paidGlobal = "Paid Parking lot";
+                    Toast.makeText(MainActivity.this, "Filtered Paid Parking Lots", Toast.LENGTH_SHORT).show();
+                } else {
+                    paidGlobal = "uncheck";
+                    Toast.makeText(MainActivity.this, "Unfiltered Paid Parking Lots", Toast.LENGTH_SHORT).show();
+                }
+                filterMarkers();
+                updateMapWithFilteredMarkers();
+
+            }
+        });
+
+        // MULTISTOREY
+        CompoundButton checkboxMSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxMSP);
+        checkboxMSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mMap.clear();
+                if (b) {
+                    mspGlobal = "Multistorey Parking lot";
+                    Toast.makeText(MainActivity.this, "Filtered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
+                } else {
+                    mspGlobal = "uncheck";
+                    Toast.makeText(MainActivity.this, "Unfiltered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
 
                 }
-            });
+                filterMarkers();
+                updateMapWithFilteredMarkers();
 
-            // PAID
-            CompoundButton checkboxPPView = (CompoundButton) MenuItemCompat.getActionView(checkboxPP);
-            checkboxPPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    mMap.clear();
-                    if (b){
-                        paidGlobal = "Paid Parking lot";
-                        Toast.makeText(MainActivity.this, "Filtered Paid Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        paidGlobal = "uncheck";
-                        Toast.makeText(MainActivity.this, "Unfiltered Paid Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    filterMarkers();
-                    updateMapWithFilteredMarkers();
+            }
+        });
 
+        //DISABLED
+        CompoundButton checkboxDPView = (CompoundButton) MenuItemCompat.getActionView(checkboxDP);
+        checkboxDPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mMap.clear();
+                if (b) {
+                    disabledGlobal = "Disabled Parking";
+                    Toast.makeText(MainActivity.this, "Filtered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
+                } else {
+                    disabledGlobal = "uncheck";
+                    Toast.makeText(MainActivity.this, "Unfiltered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
                 }
-            });
+                filterMarkers();
+                updateMapWithFilteredMarkers();
 
-            // MULTISTOREY
-            CompoundButton checkboxMSPView = (CompoundButton) MenuItemCompat.getActionView(checkboxMSP);
-            checkboxMSPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    mMap.clear();
-                    if (b){
-                        mspGlobal = "Multistorey Parking lot";
-                        Toast.makeText(MainActivity.this, "Filtered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        mspGlobal = "uncheck";
-                        Toast.makeText(MainActivity.this, "Unfiltered Multistorey Parking Lots", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-                    }
-                    filterMarkers();
-                    updateMapWithFilteredMarkers();
-
+        // ELECTRIC VEHICLE
+        CompoundButton checkboxEVPView = (CompoundButton) MenuItemCompat.getActionView(checkboxEVP);
+        checkboxEVPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mMap.clear();
+                if (b) {
+                    evGlobal = "Electric vehicle lot";
+                    Toast.makeText(MainActivity.this, "Filtered EV Parking Lots", Toast.LENGTH_SHORT).show();
+                } else {
+                    evGlobal = "uncheck";
+                    Toast.makeText(MainActivity.this, "Unfiltered EV Parking Lots", Toast.LENGTH_SHORT).show();
                 }
-            });
+                filterMarkers();
+                updateMapWithFilteredMarkers();
 
-            //DISABLED
-            CompoundButton checkboxDPView = (CompoundButton) MenuItemCompat.getActionView(checkboxDP);
-            checkboxDPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    mMap.clear();
-                    if (b){
-                        disabledGlobal = "Disabled Parking";
-                        Toast.makeText(MainActivity.this, "Filtered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        disabledGlobal = "uncheck";
-                        Toast.makeText(MainActivity.this, "Unfiltered Disabled Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    filterMarkers();
-                    updateMapWithFilteredMarkers();
+            }
+        });
 
-                }
-            });
-
-            // ELECTRIC VEHICLE
-            CompoundButton checkboxEVPView = (CompoundButton) MenuItemCompat.getActionView(checkboxEVP);
-            checkboxEVPView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    mMap.clear();
-                    if (b){
-                        evGlobal = "Electric vehicle lot";
-                        Toast.makeText(MainActivity.this, "Filtered EV Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        evGlobal = "uncheck";
-                        Toast.makeText(MainActivity.this, "Unfiltered EV Parking Lots", Toast.LENGTH_SHORT).show();
-                    }
-                    filterMarkers();
-                    updateMapWithFilteredMarkers();
-
-                }
-            });
-
-            mSeekBar.setVisibility(View.INVISIBLE);
-            mTextSeekBar.setVisibility(View.INVISIBLE);
-            mCancelShadedParking.setVisibility(View.INVISIBLE);
-            mShadedImage.setVisibility(View.INVISIBLE);
+        mSeekBar.setVisibility(View.INVISIBLE);
+        mTextSeekBar.setVisibility(View.INVISIBLE);
+        mCancelShadedParking.setVisibility(View.INVISIBLE);
+        mShadedImage.setVisibility(View.INVISIBLE);
 
 
-            mSeekBar.incrementProgressBy(1);
-            mSeekBar.setMax(12);
+        mSeekBar.incrementProgressBy(1);
+        mSeekBar.setMax(12);
 
-            clickShadedButton();
-            hideAllShaded();
+        clickShadedButton();
+        hideAllShaded();
 
 //            rowItems = new ArrayList<RowItem>();
 //            mShaded.setChecked(true);
 
-            Log.d(TAG, "onCreate: synced");
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Log.d(TAG, "onCreate: synced");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
- //end onCreate
-        }
+        //end onCreate
+    }
 
-        private void hideAllShaded(){
-          mCancelShadedParking.setOnClickListener(new View.OnClickListener() {
-              @Override
-              public void onClick(View view) {
-                  if (mShadedImage.getVisibility() == view.VISIBLE) {
-                                        mShadedImage.setVisibility(view.INVISIBLE);
-                                        mSeekBar.setVisibility(view.INVISIBLE);
-                                        mTextSeekBar.setVisibility(view.INVISIBLE);
-                                        mCancelShadedParking.setVisibility(view.INVISIBLE);
-                  }
-              }
-          });
-        }
-
-    private void findCarLocation (){
-            fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location!=null){
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
-                    }
+    private void hideAllShaded() {
+        mCancelShadedParking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mShadedImage.getVisibility() == view.VISIBLE) {
+                    mShadedImage.setVisibility(view.INVISIBLE);
+                    mSeekBar.setVisibility(view.INVISIBLE);
+                    mTextSeekBar.setVisibility(view.INVISIBLE);
+                    mCancelShadedParking.setVisibility(view.INVISIBLE);
                 }
-            });
+            }
+        });
+    }
+
+    private void findCarLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10));
+                }
+            }
+        });
     }
 
        /* private void findCarLocation (){
@@ -859,7 +868,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     });
 
-                    Toast.makeText(MainActivity.this, "called image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Select shaded zones", Toast.LENGTH_SHORT).show();
 
 //                    PhotoViewAttacher photoView = new PhotoViewAttacher(mShadedImage);
 //                    if (mShadedImage.getVisibility() == view.INVISIBLE){
@@ -1065,6 +1074,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                List<MarkerCluster> items = new MarkerClusterReader().read();
 //                mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
                 LatLng currentUser = new LatLng(p.getGeo_point().getLatitude(), p.getGeo_point().getLongitude());
+                if (p.getTypeofParking().equals("Free Parking lot")){
+//                    iconFactory.setBackground(null);
+                    iconFactory.setTextAppearance(R.style.iconGenTextBlack);
+//                    iconFactory.setColor(Color.BLACK);
+                }else if (p.getTypeofParking().equals("Paid Parking lot")){
+//                    iconFactory.setBackground(getResources().getDrawable(R.drawable.blue));
+                    iconFactory.setTextAppearance(R.style.iconGenTextWhite);
+                    iconFactory.setColor(Color.RED);
+                }else if (p.getTypeofParking().equals("Multistorey Parking lot")){
+                    iconFactory.setTextAppearance(R.style.iconGenTextBlack);
+                    iconFactory.setColor(Color.YELLOW);
+                }else if (p.getTypeofParking().equals("Disabled Parking")){
+                    iconFactory.setTextAppearance(R.style.iconGenTextWhite);
+                    iconFactory.setColor(Color.BLUE);
+                }else if (p.getTypeofParking().equals("Electric vehicle lot")){
+                    iconFactory.setTextAppearance(R.style.iconGenTextBlack);
+                    iconFactory.setColor(Color.GREEN);
+                }
+
                 MarkerOptions markerOptions = new MarkerOptions()
                                                 .position(currentUser)
                                                 .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(p.getTitle())));
@@ -1212,8 +1240,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Intent intent = new Intent(this, Login.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-
-
         }
 
 
@@ -1499,7 +1525,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void onMapLongClick(LatLng point) {
 
                 if (FirebaseAuth.getInstance().getUid()!=null) {
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.latitude, point.longitude), 20f));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.latitude, point.longitude), 18f));
 //                    moveCamera(new LatLng(point.latitude, point.longitude), 20f );
 //
 
@@ -1507,8 +1533,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 //
                     IconGenerator iconFactory = new IconGenerator(MainActivity.this);
+//                    iconFactory.setTextAppearance(R.style.iconGenText);
+//                    iconFactory.setBackground(getResources().getDrawable(R.drawable.green));
                     Marker tMarker = mMap.addMarker(new MarkerOptions().position(point));
                     tMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("Marker")));
+
 //
                     MarkerLocation mLoc = new MarkerLocation();
                     mLoc.setMarker(tMarker);
@@ -1743,13 +1772,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 try{
                     mPlace = new PlaceInfo();
                     mPlace.setName(place.getName().toString());
-                    mPlace.setAddress(place.getAddress().toString());
+//                    mPlace.setAddress(place.getAddress().toString());
                     //mPlace.setAttributions(place.getAttributions().toString());
-                    mPlace.setId(place.getId());
-                    mPlace.setLatlng(place.getLatLng());
-                    mPlace.setRating(place.getRating());
-                    mPlace.setPhoneNumber(place.getPhoneNumber().toString());
-                    mPlace.setWebsiteUri(place.getWebsiteUri());
+//                    mPlace.setId(place.getId());
+//                    mPlace.setLatlng(place.getLatLng());
+//                    mPlace.setRating(place.getRating());
+//                    mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+//                    mPlace.setWebsiteUri(place.getWebsiteUri());
 
 
 
@@ -1758,8 +1787,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.e(TAG, "onResult: NullPointerException" + e.getMessage() );
                 }
                 //get camera for the title
-                moveCamera(new LatLng(place.getViewport().getCenter().latitude
-                        ,place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace);
+                moveCamera(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude), DEFAULT_ZOOM);
+                //                moveCamera(new LatLng(place.getViewport().getCenter().latitude
+//                        ,place.getViewport().getCenter().longitude), DEFAULT_ZOOM, mPlace);
 
              /*Log.d(TAG, "onResult: Place Details" + place.getAttributions());
              Log.d(TAG, "onResult: Place Details" + place.getViewport());
@@ -1778,7 +1808,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()){
                 case R.id.parkingfine:
-                    Toast.makeText(this, "clicked on parking fine", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Clicked on parking fine", Toast.LENGTH_SHORT).show();
                     try{
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://payportal.unimas.my/epayment/onlinefine/index2.jsp"));
                         startActivity(intent);
@@ -1790,7 +1820,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     break;
 
                 case R.id.findcar:
-                    Toast.makeText(this, "find car", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Finding car last location", Toast.LENGTH_SHORT).show();
                     findCarLocation();
                     break;
 
@@ -1801,9 +1831,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     break;
 
                 case R.id.login:
-                    Toast.makeText(this, "login", Toast.LENGTH_SHORT).show();
-                    Intent intentlogin = new Intent(MainActivity.this, Login.class);
-                    startActivity(intentlogin);
+                    if (FirebaseAuth.getInstance().getUid() != null){
+                        Toast.makeText(this, "You are already logged in as " + mtesttextemailstring , Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(this, "Login", Toast.LENGTH_SHORT).show();
+                        Intent intentlogin = new Intent(MainActivity.this, Login.class);
+                        startActivity(intentlogin);
+                    }
+
+
                     break;
 
                 case R.id.signout:
@@ -1899,8 +1936,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
 
 
-            updateMapWithDatabaseMarker();
 
+            updateMapWithDatabaseMarker();
+            mMap.clear();
         }
 
         // save a particular marker's long lat with the type, title and description
@@ -1908,9 +1946,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // index the five items as one key e.g. Array[0] = {14, -122, Free Parking, FCSIT Student Parking, For students only}
 
         public void updateMapWithFilteredMarkers(){
-            mMap.clear();
-            setUpClusterer();
 
+            setUpClusterer();
+            mMap.clear();
            /* for(int i=0; i<mFilteredList.size(); i++){
                 ParkingDetails p = (ParkingDetails) mFilteredList.get(i);
 
@@ -1946,52 +1984,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                         Log.d(TAG, innerDocument.getId() + " idd => " + innerDocument.toObject(ParkingDetails.class));
                                                         ParkingDetails padet = innerDocument.toObject(ParkingDetails.class);
                                                         mMarkersList.add(padet);
-                                                        IconGenerator iconFactory = new IconGenerator(MainActivity.this);
-//                                                        LatLng currentUser = new LatLng(padet.getGeo_point().getLatitude(), padet.getGeo_point().getLongitude());
-//                                                        Log.d(TAG, "onMapReady: putted marker" + padet.getGeo_point() + "size" + mMarkersList.size());
-//                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(padet.getTitle())));
-
                                                         mSearchableMarkers.add(padet.getTitle());
                                                         QuerySnapshot qs = (QuerySnapshot) task.getResult();
                                                         List qsl = qs.getDocuments();
-//                                                        qsl.get(task.getResult().size()-1);
-
                                                         Log.d(TAG, "onComplete: abdd" + task.getResult().equals(task.getResult()));
                                                         if (innerDocument.equals(qsl.get(task.getResult().size()-1))){
 
                                                             filterMarkers();
                                                             setUpClusterer();
                                                             mMap.clear();
-                                                            /*for(int i=0; i<mFilteredList.size(); i++) {
-                                                                ParkingDetails pd = (ParkingDetails) mFilteredList.get(i);
-                                                                LatLng plotMarkers = new LatLng(pd.getGeo_point().getLatitude(), pd.getGeo_point().getLongitude());
-
-//                                                              mMap.addMarker(new MarkerOptions().position(plotMarkers)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pd.getTitle())));
-                                                            }*/
                                                         }
-
-//                                                        mFilterableMarkers.add(padet.getTypeofParking());
-
-
 
                                                     }
                                                     Log.d(TAG, "onComplete: aaaa" + mSearchableMarkers.size());
                                                     Log.d(TAG, "on click: Array is now " + mMarkersList.toString() + "\n");
                                                     Log.d(TAG, "on click: Array size is now " + mMarkersList.size() + "\n");
 //                                                    Log.d(TAG, "onComplete: abcd" + mFilterableMarkers);
-
-                                                    // should be not the right way, adding exponentially more markers
-                                                  /*  for (int i = 0;i<mMarkersList.size();i++){
-                                                        pDet = (ParkingDetails) mMarkersList.get(i);
-                                                        LatLng currentUser = new LatLng(pDet.getGeo_point().getLatitude(), pDet.getGeo_point().getLongitude());
-                                                        Log.d(TAG, "onMapReady: putted marker" + pDet.getGeo_point() + "size" + mMarkersList.size());
-                                                        mMap.addMarker(new MarkerOptions().position(currentUser)).setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(pDet.getTitle())));
-
-                                                            mSearchableMarkers.add(pDet.getTitle());
-
-
-                                                    }*/
-
 
 
                                                     }
@@ -2001,14 +2009,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                     }
 
-
-
-
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
                             }
                         });
+
+            mMap.clear();
         }
 
 

@@ -26,6 +26,7 @@
     <string name="email_registration">Email Registration</string>
     <string name="email">Email</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="location">My location</string>
 
 
     <!-- Firestore Strings -->

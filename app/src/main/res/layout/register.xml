@@ -57,6 +57,17 @@
                     android:hint="@string/confirm_password"
                     android:layout_below="@+id/input_password"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/toLoginPage"
+                    android:text="Login"
+                    android:textSize="16sp"
+                    android:textColor="#1D8ECE"
+                    android:layout_below="@+id/btn_register"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"/>
+
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_register"
@@ -65,7 +76,15 @@
                     android:layout_marginTop="35dp"
                     android:layout_below="@+id/input_confirm_password"
                     android:text="@string/register"
-                    android:background="#1D8ECE"/>
+                    android:background="@drawable/bluebutton"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relLa">
+
+
+                </RelativeLayout>
+
 
             </RelativeLayout>
 
