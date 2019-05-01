@@ -146,7 +146,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
         mRecenter = (ImageView) findViewById(R.id.ic_recenter);
 //        mInfo = (ImageView) findViewById(R.id.place_info);
-        mPlacePicker = (ImageView) findViewById(R.id.place_picker);
+//        mPlacePicker = (ImageView) findViewById(R.id.place_picker);
 
         //getLocationPermission();
         initMap();

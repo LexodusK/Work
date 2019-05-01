@@ -5,11 +5,10 @@
     tools:showIn="navigation_view">
 
 
-
-     <item android:title="Filter"
+    <item android:title="Filter"
          android:icon="@drawable/ic_filter">
 
- <menu android:id="@+id/checkboxmenu">
+         <menu android:id="@+id/checkboxmenu">
 
     <!-- <item
          android:id="@+id/shadedcheck"
@@ -80,34 +79,55 @@
          </menu>
      </item>
 
-<group>
-    <item android:title="Other features">
-        <menu>
-    <item android:id="@+id/parkingfine"
-        android:icon="@drawable/ic_parkingfine"
-        android:title="Pay Parking Fines" />
+    <group>
+        <item android:title="Other features">
+            <menu>
+        <item android:id="@+id/parkingfine"
+            android:icon="@drawable/ic_parkingfine"
+            android:title="Pay Parking Fines" />
 
-    <item android:id="@+id/findcar"
-        android:icon="@drawable/ic_findcar"
-        android:title="Find Car Location" />
+        <item android:id="@+id/findcar"
+            android:icon="@drawable/ic_findcar"
+            android:title="Find Car Location" />
+            </menu>
+        </item>
+    </group>
+
+
+    <item android:title="Entry">
+        <menu>
+            <item android:id="@+id/register"
+                android:icon="@drawable/ic_signup"
+                android:title="Register" />
+
+            <item android:id="@+id/login"
+                android:icon="@drawable/ic_login"
+                android:title="Login" />
+
+            <item android:id="@+id/signout"
+                android:icon="@drawable/ic_signup"
+                android:title="Logout"/>
         </menu>
     </item>
-</group>
-    <item android:title="Entry">
-<menu>
 
-    <item android:id="@+id/register"
-        android:icon="@drawable/ic_signup"
-        android:title="Register" />
+<item
+    android:title="Tips">
+  <menu>
+        <item
+            tools:ignore="MenuTitle"
+            android:id="@+id/tipsForAdding"
+            app:actionLayout="@layout/tips"/>
+        <item
+            tools:ignore="MenuTitle"
+            android:id="@+id/tipsForAdding2"
+            app:actionLayout="@layout/nav_footer"/>
+        <item
+            tools:ignore="MenuTitle"
+            android:id="@+id/tipsForAdding3"
+            app:actionLayout="@layout/nav_footer2"/>
+  </menu>
+</item>
 
-    <item android:id="@+id/login"
-        android:icon="@drawable/ic_login"
-        android:title="Login" />
 
-    <item android:id="@+id/signout"
-        android:icon="@drawable/ic_signup"
-        android:title="Logout"/>
-</menu>
-    </item>
 
 </menu>

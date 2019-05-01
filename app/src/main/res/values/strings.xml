@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FYP</string>
+    <string name="app_name">Parking Lot Finder</string>
     <string name="google_API">AIzaSyAw_bL96m9ni55l7V30TYSEKp39FufxCkM"</string>
     <string name="filter">Select Parking Lot Types</string>
     <string name="header">Parking Lot Finder</string>
@@ -27,6 +27,10 @@
     <string name="email">Email</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="location">My location</string>
+    <string name="tips">To add a parking lot, tap and hold the area of the map you want. </string>
+    <string name="tips2">You can only edit or delete parking lots that you added. </string>
+    <string name="tips3">Thank you very much for your contribution!            </string>
+
 
 
     <!-- Firestore Strings -->

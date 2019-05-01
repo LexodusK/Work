@@ -78,7 +78,6 @@
             android:textColor="#000"
             android:textSize="15sp"
             android:id="@+id/parkinglotinfotextwo"/>
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -95,6 +94,26 @@
 
     </RelativeLayout>
 
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/parkinglotinfotextlayoutwo">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/emailText"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="30dp"
+        android:text="Marker added by  "/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/emailText"
+        android:layout_marginTop="5dp"
+        android:id="@+id/emailVaryingText"
+       />
+</RelativeLayout>
 
 
 

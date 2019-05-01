@@ -24,6 +24,7 @@ public class parkinginfo_without_editdelete extends BottomSheetDialogFragment  {
     Context context;
     private BottomSheetListener mListener;
     private ParkingDetails mParkingDetails;
+    private TextView mTextView;
 
     //    private TextInputLayout textInputTitle;
 //    private TextInputLayout textInputDescription;
@@ -39,6 +40,9 @@ public class parkinginfo_without_editdelete extends BottomSheetDialogFragment  {
         TextView mTextDescription = v.findViewById(R.id.varying_parkinglotinfowo);
         TextView mTextPSpaces = v.findViewById(R.id.varying_parkinglotspaceswo);
         TextView mTextPType = v.findViewById(R.id.varying_parkinglottypewo);
+        mTextView = v.findViewById(R.id.emailVaryingText);
+
+
 
         mParkingDetails = (ParkingDetails) getArguments().getSerializable("key");
 
@@ -46,10 +50,13 @@ public class parkinginfo_without_editdelete extends BottomSheetDialogFragment  {
         if (mTexttitle==null){
             mTexttitle.setText(R.string.location);
         }
-        mTexttitle.setText(mParkingDetails.getTitle());
-        mTextDescription.setText(mParkingDetails.getDescription());
-        mTextPSpaces.setText(mParkingDetails.getNumberofParkingspots());
-        mTextPType.setText(mParkingDetails.getTypeofParking());
+        if (mTexttitle!=null){
+            mTexttitle.setText(mParkingDetails.getTitle());
+            mTextDescription.setText(mParkingDetails.getDescription());
+            mTextPSpaces.setText(mParkingDetails.getNumberofParkingspots());
+            mTextPType.setText(mParkingDetails.getTypeofParking());
+            mTextView.setText(mParkingDetails.getEmail());
+        }
 
         return v;
     }

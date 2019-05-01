@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
     private static final float DEFAULT_ZOOM = 15f;
-    private static final int PLACE_PICKER_REQUEST = 1;
+//    private static final int PLACE_PICKER_REQUEST = 1;
     private static GeoPoint onmaplongclickedpoint;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             //encompass the entire world
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //widgets
     private AutoCompleteTextView mSearchText;
-    private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage, mCancelShadedParking;
+    private ImageView mRecenter, mInfo, mPlacePicker, mSatelliteView, mSortMarker, mShadedImage, mCancelShadedParking, mRefresh;
     private Button mShadedButton;
     private SeekBar mSeekBar;
     private TextView mTextSeekBar;
@@ -271,11 +271,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
         mRecenter = (ImageView) findViewById(R.id.ic_recenter);
 //            mInfo = (ImageView) findViewById(R.id.place_info);
-        mPlacePicker = (ImageView) findViewById(R.id.place_picker);
+//        mPlacePicker = (ImageView) findViewById(R.id.place_picker);
         mShadedButton = (Button) findViewById(R.id.buttonForShaded);
         mShadedImage = (ImageView) findViewById(R.id.imageForShaded);
         mTextSeekBar = (TextView) findViewById(R.id.textForseekbar);
         mCancelShadedParking = (ImageView) findViewById(R.id.imageForCancelShadedParking);
+        mRefresh = (ImageView) findViewById(R.id.refresh);
         mSeekBar = (SeekBar) findViewById(R.id.seekbar);
         mDb = FirebaseFirestore.getInstance();
         textInputTitle = findViewById(R.id.Title);
@@ -491,6 +492,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         clickShadedButton();
         hideAllShaded();
+        refreshMapMarker();
 
 //            rowItems = new ArrayList<RowItem>();
 //            mShaded.setChecked(true);
@@ -513,6 +515,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+    }
+
+    private void refreshMapMarker(){
+        mRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.clear();
+                updateMapWithFilteredMarkers();
+            }
+        });
+
     }
 
     private void findCarLocation() {
@@ -1442,20 +1455,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
             //clicked on map icon to reveal surrounding things
-            mPlacePicker.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    try {
-                        startActivityForResult(builder.build(com.example.fyp.MainActivity.this), PLACE_PICKER_REQUEST);
-                    } catch (GooglePlayServicesRepairableException e) {
-                        Log.e(TAG, "onClick: GooglePlayServicesRepairableException: " + e.getMessage() );
-                    } catch (GooglePlayServicesNotAvailableException e) {
-                        Log.e(TAG, "onClick: GooglePlayServicesNotAvailableException: " + e.getMessage() );
-                    }
-                }
-            });
+//            mPlacePicker.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//
+//                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+//                    try {
+//                        startActivityForResult(builder.build(com.example.fyp.MainActivity.this), PLACE_PICKER_REQUEST);
+//                    } catch (GooglePlayServicesRepairableException e) {
+//                        Log.e(TAG, "onClick: GooglePlayServicesRepairableException: " + e.getMessage() );
+//                    } catch (GooglePlayServicesNotAvailableException e) {
+//                        Log.e(TAG, "onClick: GooglePlayServicesNotAvailableException: " + e.getMessage() );
+//                    }
+//                }
+//            });
 
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 Bundle bundle = new Bundle();
@@ -1620,9 +1633,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 //                            assert currentLocation != null;
                                 if (currentLocation!=null)
-                                    moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                            DEFAULT_ZOOM,
-                                            "My Location");
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM));
+//                                    moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+//                                            DEFAULT_ZOOM);
 
                             }
                             else{
@@ -1884,6 +1897,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mParkingDetails.setUser_id(FirebaseAuth.getInstance().getUid());
                 mParkingDetails.setMarker_id(locationRef.document().getId());
 
+//                DocumentReference userRef = mDb.collection(getString(R.string.collection_users))
+//                        .document(FirebaseAuth.getInstance().getUid());
+//                userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                    if (task.isSuccessful()) {
+//                        Log.d(TAG, "onComplete: succesfully added user details");
+//                        User user = task.getResult().toObject(User.class);
+//                        ((UserClient) getApplicationContext()).setUser(user);
+//                        DocumentSnapshot documentSnapshot = task.getResult();
+//                    }
+//                }
+//            });
+                mParkingDetails.setEmail(mtesttextemailstring);
+
 
                 Log.d(TAG, "onButtonClicked: collection "+locationRef.get());
 
@@ -1922,6 +1950,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mParkingDetails.setUser_id(FirebaseAuth.getInstance().getUid());
             mParkingDetails.setMarker_id(id);
             mParkingDetails.setGeo_point(point);
+
+
+            mParkingDetails.setEmail(mtesttextemailstring);
 
 
             DocumentReference docRef = locationRef.document(id);

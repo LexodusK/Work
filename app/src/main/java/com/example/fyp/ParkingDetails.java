@@ -18,9 +18,10 @@ public class ParkingDetails implements Serializable {
     private String Title;
     private String Description;
     private String marker_id;
+    private String email;
 
     public ParkingDetails(String typeofParking, String numberofParkingspots, String Title, String Description,
-                          GeoPoint geo_point, Date timestamp, String user_id, String marker_id) {
+                          GeoPoint geo_point, Date timestamp, String user_id, String marker_id, String email) {
         this.typeofParking = typeofParking;
         this.numberofParkingspots = numberofParkingspots;
         this.Title = Title;
@@ -29,9 +30,16 @@ public class ParkingDetails implements Serializable {
         this.timestamp = timestamp;
         this.user_id = user_id;
         this.marker_id = marker_id;
+        this.email = email;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public ParkingDetails() {
     }
@@ -111,6 +119,7 @@ public class ParkingDetails implements Serializable {
                 ", Title='" + Title + '\'' +
                 ", Description='" + Description + '\'' +
                 ", marker_id='" + marker_id + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
